@@ -1,4 +1,7 @@
-﻿namespace SightsNavigator;
+﻿using SightsNavigator.Services.SightService;
+using SightsNavigator.Services;
+
+namespace SightsNavigator;
 
 public partial class App : Application
 {
@@ -7,5 +10,7 @@ public partial class App : Application
 		InitializeComponent();
 
 		MainPage = new AppShell();
-	}
+        DependencyService.Register<ISightRequest>();
+        DependencyService.Register<IWebRequest>();
+    }
 }
