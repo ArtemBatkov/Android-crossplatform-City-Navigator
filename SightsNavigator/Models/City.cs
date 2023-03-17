@@ -26,5 +26,25 @@ namespace SightsNavigator.Models
         private string _timezone;
         private string _status;
 
+
+
+        //List of Xids
+        public List<string> ListOfXids { get => _xidList; set => _xidList = value; }
+        private List<String> _xidList;
+
+        public List<Sight> SightList { get; set; }
+        
+
+        public class Sight
+        {
+            public string Name { get => _name; set => _name = value; }
+            public string Xid { get => _xid; set => _xid = value; }
+
+            private string _xid;
+            private string _name;
+        }
+
+
+
     }
 }

@@ -1,0 +1,78 @@
+Practice example: 
+1) City is Saint-Petersburg
+Link: https://api.opentripmap.com/0.1/en/places/geoname?name=saint-petersburg&apikey=5ae2e3f221c38a28845f05b62f0092f270a88190119b3678a057dd4a
+
+Response: {
+  "name": "Saint Petersburg",
+  "country": "RU",
+  "lat": 59.93863,
+  "lon": 30.31413,
+  "population": 5028000,
+  "timezone": "Europe/Moscow",
+  "status": "OK"
+}
+
+2) Coordinates are "lat": 59.93863 "lon": 30.31413
+Use these coordinates + set radius as 30km or 30 000 metres
+
+Link: https://api.opentripmap.com/0.1/en/places/radius?radius=30000&lon=30.31413&lat=59.93863&apikey=5ae2e3f221c38a28845f05b62f0092f270a88190119b3678a057dd4a
+Response: 
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "7281004",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.3147106,
+          59.9380684
+        ]
+      },
+      "properties": {
+        "xid": "N5661720423",
+        "name": "М. В. Захарову",
+        "dist": 70.53949268,
+        "rate": 1,
+        "osm": "node/5661720423",
+        "kinds": "historic,monuments_and_memorials,interesting_places,monuments"
+      }
+    },
+     ....................... 499 elements more
+
+
+
+3) grab the xid for the first one
+xid = N5661720423
+Link: https://api.opentripmap.com/0.1/en/places/xid/N5661720423?apikey=5ae2e3f221c38a28845f05b62f0092f270a88190119b3678a057dd4a
+Response: 
+{
+  "xid": "N5661720423",
+  "name": "М. В. Захарову",
+  "address": {
+    "city": "Дворцовый округ",
+    "road": "Дворцовая площадь",
+    "state": "Санкт-Петербург",
+    "country": "Россия",
+    "postcode": "190000",
+    "country_code": "ru",
+    "house_number": "12",
+    "state_district": "Центральный район"
+  },
+  "rate": "1",
+  "osm": "node/5661720423",
+  "kinds": "historic,monuments_and_memorials,interesting_places,monuments",
+  "sources": {
+    "geometry": "osm",
+    "attributes": [
+      "osm"
+    ]
+  },
+  "otm": "https://opentripmap.com/en/card/N5661720423",
+  "point": {
+    "lon": 30.31471061706543,
+    "lat": 59.93806838989258
+  }
+}
+

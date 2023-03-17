@@ -41,6 +41,9 @@ public partial class MainPage : ContentPage
                 $"status: {city.Status}";
         }
         else LabelInfoCity.Text = "NULL";
+
+        double radius = 30_000;
+        await service.GetSightsListOfCityAsync(city, radius);
     }
 }
 
