@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.Globalization;
 using System.Diagnostics.Metrics;
 using System.Timers;
+using static SightsNavigator.Models.City;
 
 
 namespace SightsNavigator.Services.SightService
@@ -17,7 +18,7 @@ namespace SightsNavigator.Services.SightService
     internal class SightRequest : ISightRequest
     {
         private static System.Timers.Timer RequesTimer;
-        private static double _timerPeriod = 1000;
+        private static int _timerPeriod = 1000;
         public SightRequest()
         {
             RequesTimer = new System.Timers.Timer(_timerPeriod);
@@ -152,70 +153,174 @@ namespace SightsNavigator.Services.SightService
             var responses = new List<HttpResponseMessage>();
 
             var sights = new List<City.Sight>();
+            int endchunk;
+
+            System.Diagnostics.Stopwatch localwatch = new System.Diagnostics.Stopwatch();
+            DateTime beginmeasure;
             watch.Start();
+            bool success = true;
 
             while (start < end)
             {
                 try
                 {
-                    if (Math.Abs(start - end) < step) step = Math.Abs(start - end);
+                    if (end - start < step) step = end - start;
                     else step = 5;
 
-                    var endchunk = (step + start > end) ? end : step + start;
+                    endchunk = (step + start > end) ? end : step + start;
 
+                    System.Diagnostics.Debug.WriteLine($"[{start} ... {endchunk}]");
+
+                    //Tasks filling
+                    beginmeasure = DateTime.UtcNow;
                     for (int i = start; i < endchunk; i++)
                     {
                         xid = xids[i];
                         url = GetSightURL(xid);
                         tasks.Add(web.FetchDataFromAPI(url));
                     }
+                    System.Diagnostics.Debug.WriteLine($"Execution Time -- fill tasks: {(beginmeasure - DateTime.UtcNow).ToString("mm\\:ss\\.ff")}");
 
+                    /*ATTENTION!
+                     BIG MEMORY LEAKAGE!
+                      1 check the type of tasks 
+                      2 response don't have to exist
+                      3 check type in functions AllTasksSuccess and RetryUnSuccessTasks
+                     */
+
+
+
+                    //WhenAll task will be completed
+                    beginmeasure = DateTime.UtcNow;
                     await Task.WhenAll(tasks.ToArray());
+                    //success = AllTasksSuccessfull(tasks);
+                    System.Diagnostics.Debug.WriteLine($"all success first-time: {success}");
+                    //if (!success)
+                    //{
+                    //    var g = 3 + 3;
+                    //    //tasks = (await RetryUnSuccessTasks(tasks)).ToList();
+                    //}
+                   
+                    System.Diagnostics.Debug.WriteLine($"Execution Time -- execution for all tasks: {(beginmeasure - DateTime.UtcNow).ToString("mm\\:ss\\.ff")}");
 
-                    foreach(var task in tasks)
+
+
+                    //Filling responses
+                    beginmeasure = DateTime.UtcNow;
+                    tasks.ForEach(task =>
                     {
                         responses.Add(task.Result);
-                    }
+                    });
+                    System.Diagnostics.Debug.WriteLine($"Execution Time -- fill responses: {(beginmeasure - DateTime.UtcNow).ToString("mm\\:ss\\.ff")}");
 
+                    //Getting sightsObjects
+                    beginmeasure = DateTime.UtcNow;
                     var sightsObjects = await DecodeSight(responses);
-                    foreach(var sight in sightsObjects)
+                    System.Diagnostics.Debug.WriteLine($"Execution Time -- decoding sights: {(beginmeasure - DateTime.UtcNow).ToString("mm\\:ss\\.ff")}");
+
+                    //Filtering and filling sights
+                    beginmeasure = DateTime.UtcNow;
+                    sightsObjects.ForEach(sight =>
                     {
-                        if(sight!=null) sights.Add(sight);
-                    }
+                        if (sight != null)
+                        {
+                            if (!sights.Contains(sight)) sights.Add(sight);
+                             
+                        }                        
+                    });
+                    System.Diagnostics.Debug.WriteLine($"Execution Time -- filtering sights: {(beginmeasure - DateTime.UtcNow).ToString("mm\\:ss\\.ff")}");
 
                     //await Task.Delay((int)_timerPeriod);
-                    Thread.Sleep(1500);
+
+                    //beginmeasure = DateTime.UtcNow;
+                    //await Task.Delay((int)_timerPeriod*2);
+                    //System.Diagnostics.Debug.WriteLine($"Execution Time -- delay {(beginmeasure - DateTime.UtcNow).ToString("mm\\:ss\\.ff")}");
+
+                    //Delay
+                    beginmeasure = DateTime.UtcNow;
+                    await Task.Delay(_timerPeriod);
+                    System.Diagnostics.Debug.WriteLine($"Execution Time -- DELAY REQUEST: {(beginmeasure - DateTime.UtcNow).ToString("mm\\:ss\\.ff")}");
+
+
+                    beginmeasure = DateTime.UtcNow;
                     if (start + step > end) break;
                     else start += step;
                     tasks.Clear();
                     responses.Clear();
-                     
+                    System.Diagnostics.Debug.WriteLine($"Execution Time -- range changing and clearance: {(beginmeasure - DateTime.UtcNow).ToString("mm\\:ss\\.ff")}");
+
+                    //Thread.Sleep(1500);
+                    //if (start + step > end) break;
+                    //else start += step;
+                    //tasks.Clear();
+                    //responses.Clear();
+
+                    System.Diagnostics.Debug.WriteLine("---------------------------------\n");
+
                 }
-                catch (Exception ex) { }
+                catch (Exception ex) {
+                    System.Diagnostics.Debug.WriteLine(ex);
+                }
 
             }
             watch.Stop();
             System.Diagnostics.Debug.WriteLine($"Execution Time: {watch.Elapsed} s");
             return sights;
         }
+         
+        private bool AllTasksSuccessfull (List<Task<HttpResponseMessage>> tasks)
+        {
+            bool success = true;
+            tasks.ForEach(task =>
+            {
+                if (!task.IsCompletedSuccessfully) { success = false; }
+            });
+            return success;
+        }
+        private async Task<List<Task<HttpResponseMessage>>> RetryUnSuccessTasks(List<Task<HttpResponseMessage>> tasks)
+        {
+            List<Task<HttpResponseMessage>> _newtasks = new List<Task<HttpResponseMessage>>();
+            tasks.ForEach(async task =>
+            {
+                while (!task.Result.IsSuccessStatusCode) {
+                    await Task.Delay(_timerPeriod).ContinueWith(_=>{
+                        task.Start();
+                    });                   
+                }
+                _newtasks.Add(task);
+            });
+            return _newtasks;
+        }
 
 
         private async Task<List<City.Sight>> DecodeSight(List<HttpResponseMessage> responses)
         {
-            var sights = new List<City.Sight>();    
-            foreach(var response in responses)
+            
+            List<City.Sight> sights = new List<City.Sight>();
+            string json;
+            dynamic converter;
+            City.Sight sight = new City.Sight();
+            responses.ForEach(async response =>
             {
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    string json = await response.Content.ReadAsStringAsync();
-                    var converter = JsonConvert.DeserializeObject<dynamic>(json);
-                    var sight = new City.Sight();
-                    sight.Xid = converter.xid;
-                    sight.Name = converter.name;
-                    sights.Add(sight);
+                    List<HttpResponseMessage> copyofresponses = responses.ToList();
+                    if (response.IsSuccessStatusCode)
+                    {
+                        json = await response.Content.ReadAsStringAsync();
+                        converter = JsonConvert.DeserializeObject<dynamic>(json);
+                        sight = new City.Sight();
+                        sight.Xid = converter.xid;
+                        sight.Name = converter.name;
+                        sights.Add(sight);
+                    }
+                    else sights.Add(null);
                 }
-                else sights.Add(null);
-            }
+                catch(Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex);
+                }
+            });
             return sights;            
         }
 
@@ -286,7 +391,7 @@ namespace SightsNavigator.Services.SightService
         public static void ChangeTimerPeriod(double newPeriod)
         {
             RequesTimer.Stop();
-            _timerPeriod = newPeriod;
+            _timerPeriod = (int)newPeriod;
             RequesTimer.Interval = newPeriod;
         }
     }
