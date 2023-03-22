@@ -1,16 +1,9 @@
-﻿using SightsNavigator.Models;
-using SightsNavigator.Services.Web_Requests;
+﻿using Newtonsoft.Json;
+using SightsNavigator.Models;
+using SightsNavigator.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.WebRequestMethods;
-using Newtonsoft.Json;
 using System.Globalization;
-using System.Diagnostics.Metrics;
-using System.Timers;
-using static SightsNavigator.Models.City;
+using System.Threading.Tasks;
 
 
 namespace SightsNavigator.Services.SightService
@@ -26,14 +19,14 @@ namespace SightsNavigator.Services.SightService
 
         }
 
-   
+
 
         public async Task<City> GetCityAsync(string name, string country = "auto")
         {
             //Step 1
-           //Get default city information 
-            City city = await GetBasicCityInfoAsync(name,country);
-            
+            //Get default city information 
+            City city = await GetBasicCityInfoAsync(name, country);
+
             //Step 2
             if (city is null) return null;
             //Get list of Xids of the city 
@@ -45,16 +38,20 @@ namespace SightsNavigator.Services.SightService
 
             //Step 3
             //Get List of sights
-            await GetListOfSights(city);
+            // await GetListOfSights(city);
 
+            //Step3.0
+            //Get first ten sights
+            var ten = await GetFirstTenSights(city);
+            city.SightList = ten.ToList();
 
             return city;
         }
 
 
-    
 
-        private async Task<City> GetBasicCityInfoAsync(string name, string country = "auto")
+
+        public async Task<City> GetBasicCityInfoAsync(string name, string country = "auto")
         {
             string lname = name.ToLower();// lower case name of the city
             string lcountry = country.ToLower();//lower case country
@@ -129,9 +126,10 @@ namespace SightsNavigator.Services.SightService
 
         private async Task<IEnumerable<City.Sight>> GetListOfSights(City city)
         {
+            /*DOESNT FULLY WORK*/
             if (city is null) return null;
             if (city.ListOfXids is null) return null;
-            if (city.ListOfXids.Count() == 0) return null; 
+            if (city.ListOfXids.Count() == 0) return null;
 
             var xids = city.ListOfXids; ;
             string url;
@@ -150,6 +148,8 @@ namespace SightsNavigator.Services.SightService
             City.Sight blankSight = new City.Sight();
 
             var tasks = new List<Task<HttpResponseMessage>>();
+            var badtasks = new List<Task<HttpResponseMessage>>();
+
             var responses = new List<HttpResponseMessage>();
 
             var sights = new List<City.Sight>();
@@ -165,7 +165,7 @@ namespace SightsNavigator.Services.SightService
                 try
                 {
                     if (end - start < step) step = end - start;
-                    else step = 5;
+                    else step = 10;
 
                     endchunk = (step + start > end) ? end : step + start;
 
@@ -189,19 +189,36 @@ namespace SightsNavigator.Services.SightService
                      */
 
 
-
                     //WhenAll task will be completed
                     beginmeasure = DateTime.UtcNow;
                     await Task.WhenAll(tasks.ToArray());
-                    //success = AllTasksSuccessfull(tasks);
-                    System.Diagnostics.Debug.WriteLine($"all success first-time: {success}");
-                    //if (!success)
-                    //{
-                    //    var g = 3 + 3;
-                    //    //tasks = (await RetryUnSuccessTasks(tasks)).ToList();
-                    //}
-                   
                     System.Diagnostics.Debug.WriteLine($"Execution Time -- execution for all tasks: {(beginmeasure - DateTime.UtcNow).ToString("mm\\:ss\\.ff")}");
+
+
+                    //Bad tasks
+                    beginmeasure = DateTime.UtcNow;
+                    badtasks = tasks.Where(task => !task.Result.IsSuccessStatusCode).ToList();
+                    tasks.RemoveAll(task => !task.Result.IsSuccessStatusCode);
+                    if (tasks.Count() < step)
+                    {
+                        var b = 3 + 3;
+                    }
+
+                    System.Diagnostics.Debug.WriteLine($"Execution Time -- bad task filtering: {(beginmeasure - DateTime.UtcNow).ToString("mm\\:ss\\.ff")}");
+
+                    while (badtasks.Count() > 0)
+                    {
+                        var completed = await Task.WhenAny(badtasks.ToArray());
+                        if (completed.Result.IsSuccessStatusCode)
+                        {
+                            tasks.Add(completed);
+                            badtasks.Remove(completed);
+                        }
+                        else
+                        {
+                            await Task.Delay(_timerPeriod);
+                        }
+                    }
 
 
 
@@ -225,8 +242,8 @@ namespace SightsNavigator.Services.SightService
                         if (sight != null)
                         {
                             if (!sights.Contains(sight)) sights.Add(sight);
-                             
-                        }                        
+
+                        }
                     });
                     System.Diagnostics.Debug.WriteLine($"Execution Time -- filtering sights: {(beginmeasure - DateTime.UtcNow).ToString("mm\\:ss\\.ff")}");
 
@@ -246,6 +263,7 @@ namespace SightsNavigator.Services.SightService
                     if (start + step > end) break;
                     else start += step;
                     tasks.Clear();
+                    badtasks.Clear();
                     responses.Clear();
                     System.Diagnostics.Debug.WriteLine($"Execution Time -- range changing and clearance: {(beginmeasure - DateTime.UtcNow).ToString("mm\\:ss\\.ff")}");
 
@@ -258,7 +276,8 @@ namespace SightsNavigator.Services.SightService
                     System.Diagnostics.Debug.WriteLine("---------------------------------\n");
 
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     System.Diagnostics.Debug.WriteLine(ex);
                 }
 
@@ -267,8 +286,107 @@ namespace SightsNavigator.Services.SightService
             System.Diagnostics.Debug.WriteLine($"Execution Time: {watch.Elapsed} s");
             return sights;
         }
-         
-        private bool AllTasksSuccessfull (List<Task<HttpResponseMessage>> tasks)
+
+
+
+        private async Task<IEnumerable<City.Sight>> GetFirstTenSights(City city)
+        {
+            if (city is null) return null;
+            if (city.ListOfXids is null) return null;
+            if (city.ListOfXids.Count() == 0) return null;
+
+            var xids = city.ListOfXids; ;
+            string url, xid;
+
+            var tasks = new List<Task<HttpResponseMessage>>();
+            var sights = new List<City.Sight>();
+
+            WebRequest web = new WebRequest();
+            HttpResponseMessage response;
+
+            for (int i = 0; i < 10; i++)
+            {
+                xid = xids[i];
+                url = GetSightURL(xid);
+                tasks.Add(web.FetchDataFromAPI(url));
+            }
+            await Task.WhenAll(tasks.ToArray());
+            
+
+            for (int i =0; i<10; i++) {
+                if (tasks[i].Result.IsSuccessStatusCode)
+                {
+                    var sight = new City.Sight();
+                    var json = await tasks[i].Result.Content.ReadAsStringAsync();
+                    var converter = JsonConvert.DeserializeObject<dynamic>(json);
+
+
+
+                    sight.Name = converter.name;
+                    sight.Xid = converter.xid;
+
+                    
+                    if(converter.address is not null )
+                    {
+                        var Address = converter.address;
+                        var _city =  Address.city ;
+                        var _road = TryParseJsonLine(Address.road);
+
+
+
+                        var _state = TryParseJsonLine(Address.state);
+                        var _country = TryParseJsonLine(Address.country);
+                        var _zip = TryParseJsonLine(Address.postcode);
+                        var _house_number = TryParseJsonLine(Address.house_number);
+                        var _state_district = TryParseJsonLine(Address.state_district);
+
+                        var address = $"city: {_city}\n" +
+                            $"state: {_state}\n" +
+                            $"country: {_country}\n" +
+                            $"zip: {_zip}\n" +
+                            $"road: {_road}, {_house_number}\n" +
+                            $"disctrict: {_state_district}";
+                        sight.Address = address;
+                    }
+                   
+
+                    var wikipedia_extracts = converter.wikipedia_extracts;
+                    if(wikipedia_extracts is not null)
+                    {
+                        var description = TryParseJsonLine(wikipedia_extracts.text);
+                        sight.Description = description;
+                    }
+
+
+
+                    //var image = TryParseJsonLine(converter.image);
+                    var preview = converter.preview;
+                    if(preview is not null)
+                    {
+                        var source = TryParseJsonLine(preview.source);
+                        var image = source;
+                        sight.Image = image;
+                    }
+
+                    
+                    
+                    //sight.Image = image;
+                    sights.Add(sight);
+                }
+            }
+            return sights.ToList();
+        }
+
+
+
+
+
+
+
+
+
+
+        private bool AllTasksSuccessfull(List<Task<HttpResponseMessage>> tasks)
         {
             bool success = true;
             tasks.ForEach(task =>
@@ -277,25 +395,12 @@ namespace SightsNavigator.Services.SightService
             });
             return success;
         }
-        private async Task<List<Task<HttpResponseMessage>>> RetryUnSuccessTasks(List<Task<HttpResponseMessage>> tasks)
-        {
-            List<Task<HttpResponseMessage>> _newtasks = new List<Task<HttpResponseMessage>>();
-            tasks.ForEach(async task =>
-            {
-                while (!task.Result.IsSuccessStatusCode) {
-                    await Task.Delay(_timerPeriod).ContinueWith(_=>{
-                        task.Start();
-                    });                   
-                }
-                _newtasks.Add(task);
-            });
-            return _newtasks;
-        }
+        
 
 
         private async Task<List<City.Sight>> DecodeSight(List<HttpResponseMessage> responses)
         {
-            
+
             List<City.Sight> sights = new List<City.Sight>();
             string json;
             dynamic converter;
@@ -316,12 +421,12 @@ namespace SightsNavigator.Services.SightService
                     }
                     else sights.Add(null);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine(ex);
                 }
             });
-            return sights;            
+            return sights;
         }
 
 
@@ -335,7 +440,7 @@ namespace SightsNavigator.Services.SightService
         {
             watch.Stop();
             System.Diagnostics.Debug.WriteLine($"Execution Time: {watch.Elapsed} s");
-            
+
         }
 
 
@@ -345,7 +450,7 @@ namespace SightsNavigator.Services.SightService
 
 
 
-        
+
 
 
 
@@ -381,7 +486,7 @@ namespace SightsNavigator.Services.SightService
             $"apikey={key.ToString(CultureInfo.InvariantCulture)}";
         }
 
-        
+
         public string GetSightURL(string xid, string key = "5ae2e3f221c38a28845f05b62f0092f270a88190119b3678a057dd4a")
         {
             if (String.IsNullOrEmpty(xid)) return "not correct link";
@@ -394,5 +499,12 @@ namespace SightsNavigator.Services.SightService
             _timerPeriod = (int)newPeriod;
             RequesTimer.Interval = newPeriod;
         }
+
+        public string TryParseJsonLine(object line) {
+            if (line == null) return "";
+            var str = line.ToString();
+            return !String.IsNullOrEmpty(str) ? str.ToString() : "";
+        }
+            
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SightsNavigator.Services.Web_Requests
+namespace SightsNavigator.Services
 {
     internal class WebRequest : IWebRequest
     {

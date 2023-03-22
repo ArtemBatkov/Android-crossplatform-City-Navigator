@@ -1,8 +1,91 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SightsNavigator.Views.MainPage">
+             x:Class="SightsNavigator.Views.MainPage"
+             xmlns:views="clr-namespace:SightsNavigator.Views"
+             xmlns:viewmodels="clr-namespace:SightsNavigator.ViewModels"
+             xmlns:models="clr-namespace:SightsNavigator.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
 
+
+
+
+    <ContentPage.BindingContext>
+        <viewmodels:SearchCitySightsViewModel/>
+    </ContentPage.BindingContext>
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding PageAppearingCommand}"/>
+    </ContentPage.Behaviors>
+
+
+    <ContentPage.Resources>
+        <Color x:Key="searchbg">#c0c0c0</Color>
+    </ContentPage.Resources>
+
+
+
+
+    <Grid ColumnDefinitions="3*,1*" RowDefinitions="1*,3*">
+
+        <Entry Grid.Row="0" Grid.Column="0" Text="Moscow" 
+               Background="{StaticResource  searchbg}"
+               TextColor="Black"/>
+
+        <Button Grid.Row="0" Grid.Column="1" Text="Let's Find"
+                Command="{Binding SearchSightsCommand}"/>
+
+
+        <Grid  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+
+            <CollectionView                          
+                ItemsSource="{Binding Sights}">
+
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>                         
+                              <Grid RowDefinitions="*,*" ColumnDefinitions="*,*"
+                                 >
+                            <Image Grid.Row="0" 
+                                   Aspect="AspectFit"
+                                   Grid.RowSpan="2"
+                                   Grid.Column="0" >
+                                <Image.Source>
+                                    <UriImageSource Uri="{Binding Image}" CacheValidity="1" CachingEnabled="true"/>
+                                </Image.Source>
+                            </Image>
+                                      
+
+                                <Label Grid.Row="0" 
+                                       Grid.Column="1"
+                                    Text="{Binding Xid}" TextColor="Wheat"/>
+
+                                <Label Grid.Row="1" Grid.Column="1"
+                                    Text="{Binding Description}" TextColor="Black"/>
+                            </Grid> 
+                        <!--
+                        <StackLayout Background="Blue">
+                            <Image Source="{Binding Image}"/>
+                            <Label Text="{Binding Description}" TextColor="Wheat"/>
+                            <Label Text="{Binding Description}" TextColor="Black"/>
+                        </StackLayout>
+                      -->
+                        
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+
+            </CollectionView>
+
+        </Grid>
+
+    </Grid>
+
+
+
+    <!--
     <ScrollView>
         <VerticalStackLayout
             Spacing="25"
@@ -41,5 +124,7 @@
 
         </VerticalStackLayout>
     </ScrollView>
+    
+    -->
 
 </ContentPage>

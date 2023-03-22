@@ -40,9 +40,19 @@ namespace SightsNavigator.Models
             public string Name { get => _name; set => _name = value; }
             public string Xid { get => _xid; set => _xid = value; }
 
+
+            public string Image { get => _image; set => _image = value; }
+
+            public string Address { get => _address; set => _address = value; }
+            public string Description { get => _description; set => _description = value; }
+
             private string _xid;
             private string _name;
+            private string _image;
+            private string _description;
+            private string _address;
         }
+
 
 
 
