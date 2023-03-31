@@ -41,7 +41,9 @@
         <Grid  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
 
             <CollectionView                          
-                ItemsSource="{Binding Sights}">
+                ItemsSource="{Binding Sights}"
+                Scrolled="SightsScrolled"  >
+                
 
 
                 <CollectionView.ItemTemplate>
@@ -76,6 +78,13 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
 
+                <CollectionView.Footer>
+                    <Button Text="Load More" BackgroundColor="CornflowerBlue"
+                            TextColor="Wheat"
+                            HorizontalOptions="Center"
+                            IsVisible="{Binding FooterVisible}"
+                            />
+                </CollectionView.Footer>
 
             </CollectionView>
 

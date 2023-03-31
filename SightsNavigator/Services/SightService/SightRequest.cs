@@ -2,6 +2,7 @@
 using SightsNavigator.Models;
 using SightsNavigator.Services;
 using System;
+using System.Diagnostics.Metrics;
 using System.Globalization;
 using System.Threading.Tasks;
 
@@ -320,7 +321,7 @@ namespace SightsNavigator.Services.SightService
                     var json = await tasks[i].Result.Content.ReadAsStringAsync();
                     var converter = JsonConvert.DeserializeObject<dynamic>(json);
 
-
+                    
 
                     sight.Name = converter.name;
                     sight.Xid = converter.xid;
@@ -329,24 +330,26 @@ namespace SightsNavigator.Services.SightService
                     if(converter.address is not null )
                     {
                         var Address = converter.address;
-                        var _city =  Address.city ;
+                        string _city = TryParseJsonLine(Address.city) ;
                         var _road = TryParseJsonLine(Address.road);
 
 
 
                         var _state = TryParseJsonLine(Address.state);
                         var _country = TryParseJsonLine(Address.country);
+                        var _suburb = TryParseJsonLine(Address.subsurb);
+                        var _pedestrian = TryParseJsonLine(Address.pedestrian);
                         var _zip = TryParseJsonLine(Address.postcode);
                         var _house_number = TryParseJsonLine(Address.house_number);
                         var _state_district = TryParseJsonLine(Address.state_district);
 
-                        var address = $"city: {_city}\n" +
-                            $"state: {_state}\n" +
-                            $"country: {_country}\n" +
-                            $"zip: {_zip}\n" +
-                            $"road: {_road}, {_house_number}\n" +
-                            $"disctrict: {_state_district}";
-                        sight.Address = address;
+                        sight.SightAddress = new City.Sight.Address(
+                            city: _city,
+                            country: _country,
+                            state: _state,
+                            subUrb: _suburb,
+                            pedestrian: _pedestrian
+                            ) ;
                     }
                    
 

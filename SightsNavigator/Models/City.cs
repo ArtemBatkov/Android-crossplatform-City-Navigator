@@ -43,14 +43,61 @@ namespace SightsNavigator.Models
 
             public string Image { get => _image; set => _image = value; }
 
-            public string Address { get => _address; set => _address = value; }
+            
             public string Description { get => _description; set => _description = value; }
 
             private string _xid;
             private string _name;
             private string _image;
             private string _description;
-            private string _address;
+            private Address _addr;
+
+            public Address SightAddress { get => _addr; set => _addr = value; }
+
+            public class Address
+            {
+
+                public Address(string city = "", string country = "", string state = "", string subUrb = "", string pedestrian = "", 
+                    string stateDistrict = "")
+                {
+                    _city = city;
+                    _state = state;
+                    _suburb = subUrb;
+                    _stateDistrict = stateDistrict;                                     
+                    _pedestrian = pedestrian;
+
+                    _address = $"city: {_city}\n" +
+                            $"state: {_state}\n" +
+                            $"country: {_country}\n" +
+                            $"subub: {_suburb}\n" +
+                            $"pedestrian: {_pedestrian}\n" +
+                            $"disctrict: {_stateDistrict}";
+                }
+
+
+                public string FullAddress { get => _address;}
+
+                public string City { get => _city; set => _city = value; }
+                public string State { get => _state; set => _state = value; }
+                public string SubUrb { get => _suburb; set => _suburb = value; }
+                public string Pedestrian { get => _pedestrian; set => _pedestrian = value; }
+                public string StateDistrict { get => _stateDistrict; set => _stateDistrict = value; }
+                public string Country { get => _country; set=>_country= value; }
+
+
+
+                private string _address;
+                private string _city;
+                private string _state;
+                private string _suburb;
+                private string _pedestrian;
+                private string _stateDistrict;
+                private string _country;
+
+                
+            }
+
+
         }
 
 

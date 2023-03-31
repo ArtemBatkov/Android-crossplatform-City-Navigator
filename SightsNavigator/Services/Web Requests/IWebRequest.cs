@@ -8,6 +8,9 @@ namespace SightsNavigator.Services
 {
     internal interface IWebRequest
     {
-        public Task<HttpResponseMessage> FetchDataFromAPI(string url); 
+        public Task<HttpResponseMessage> FetchDataFromAPI(string url);
+
+   
+
     }
 }

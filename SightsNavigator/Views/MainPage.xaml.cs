@@ -9,17 +9,23 @@ namespace SightsNavigator.Views;
 public partial class MainPage : ContentPage
 {
 	 
-
+    private SearchCitySightsViewModel _sightViewModel;
 	public MainPage()
 	{
 		InitializeComponent();
+        _sightViewModel= new SearchCitySightsViewModel();
 
-        BindingContext = new SearchCitySightsViewModel();
+        BindingContext = _sightViewModel;
+    }
 
+    private void SightsScrolled(object sender, ItemsViewScrolledEventArgs e)
+    {
+        _sightViewModel.onSightsScrolled(sender, e);
+    }
+
+    private void RemainingCollectionReached()
+    {
 
     }
-    
-    
-      
 }
 
