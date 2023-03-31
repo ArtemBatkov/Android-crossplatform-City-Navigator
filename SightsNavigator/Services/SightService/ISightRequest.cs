@@ -11,5 +11,6 @@ namespace SightsNavigator.Services.SightService
         public Task<City> GetCityAsync(string name, string country = "auto");
 
         public Task<IEnumerable<String>> GetSightsListOfCityAsync (City city, double radius);
+        public Task<IEnumerable<City.Sight>> GetChunckOfSights(List<String> Xids);
     }
 }

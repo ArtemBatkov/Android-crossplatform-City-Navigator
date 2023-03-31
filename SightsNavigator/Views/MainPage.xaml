@@ -42,14 +42,16 @@
 
             <CollectionView                          
                 ItemsSource="{Binding Sights}"
-                Scrolled="SightsScrolled"  >
+                Scrolled="SightsScrolled"  
+                x:Name="myCV">
                 
 
 
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>                         
-                              <Grid RowDefinitions="*,*" ColumnDefinitions="*,*"
-                                 >
+                    <DataTemplate>
+                        <Grid RowDefinitions="*" ColumnDefinitions="*">
+
+                            <!-- 
                             <Image Grid.Row="0" 
                                    Aspect="AspectFit"
                                    Grid.RowSpan="2"
@@ -58,22 +60,19 @@
                                     <UriImageSource Uri="{Binding Image}" CacheValidity="1" CachingEnabled="true"/>
                                 </Image.Source>
                             </Image>
-                                      
+                            -->
 
-                                <Label Grid.Row="0" 
-                                       Grid.Column="1"
-                                    Text="{Binding Xid}" TextColor="Wheat"/>
+                            <Label Grid.Row="0" 
+                                    Grid.Column="0"
+                                Text="{Binding Xid}" TextColor="Wheat"
+                                  />
 
-                                <Label Grid.Row="1" Grid.Column="1"
+                            <!-- 
+                            <Label Grid.Row="1" Grid.Column="1"
                                     Text="{Binding Description}" TextColor="Black"/>
-                            </Grid> 
-                        <!--
-                        <StackLayout Background="Blue">
-                            <Image Source="{Binding Image}"/>
-                            <Label Text="{Binding Description}" TextColor="Wheat"/>
-                            <Label Text="{Binding Description}" TextColor="Black"/>
-                        </StackLayout>
-                      -->
+                            -->
+                        </Grid> 
+              
                         
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
@@ -83,6 +82,7 @@
                             TextColor="Wheat"
                             HorizontalOptions="Center"
                             IsVisible="{Binding FooterVisible}"
+                            Command="{Binding LoadMoreCommand}"
                             />
                 </CollectionView.Footer>
 

@@ -16,6 +16,7 @@ public partial class MainPage : ContentPage
         _sightViewModel= new SearchCitySightsViewModel();
 
         BindingContext = _sightViewModel;
+        _sightViewModel.SightsCollectionView = myCV;
     }
 
     private void SightsScrolled(object sender, ItemsViewScrolledEventArgs e)

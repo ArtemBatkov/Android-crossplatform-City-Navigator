@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using SightsNavigator.Models;
 using SightsNavigator.Services;
 
-
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Input;
 using Command = MvvmHelpers.Commands.Command;
@@ -16,6 +16,8 @@ using SightsNavigator.Services.SightService;
 using System.Collections.ObjectModel;
 using MvvmHelpers;
 using Microsoft.Maui.Layouts;
+using Debug = System.Diagnostics.Debug;
+
 
 namespace SightsNavigator.ViewModels
 {
@@ -23,31 +25,39 @@ namespace SightsNavigator.ViewModels
     {
         public ISightRequest service => DependencyService.Get<ISightRequest>();
         public IWebRequest webservice => DependencyService.Get<IWebRequest>();
-        public ObservableRangeCollection <City.Sight> Sights { get; set; }
+        public ObservableRangeCollection<City.Sight> Sights { get; set; }
         public SearchCitySightsViewModel() {
             PageAppearingCommand = new AsyncCommand(PageAppearing);
             SearchSightsCommand = new Command(onSearchSights);
             Sights = new ObservableRangeCollection<City.Sight>();
             FooterVisible = false;
+            LoadMoreCommand = new AsyncCommand(onLoadMoreCommand);
+            
         }
-
-  
 
         // COMMANDS - start
         public AsyncCommand PageAppearingCommand { get; set; }
         public ICommand SearchSightsCommand { get; set; }
-        
+        public ICommand LoadMoreCommand { get; set; }
+        public CollectionView SightsCollectionView {get;set;}
+
         // COMMANDS - end
 
 
         //Properties - start
+        private int _start = 0; // start chunck
+        private int _end = 0; // end chunck
+        private int _defaultStep = 7; // default step of chunck
+
+        private City city; //city
+        
+        
         public bool FooterVisible {
             get => _footerVisible;
             set {
                 if(_footerVisible != value)
                    _footerVisible = value;
                 OnPropertyChanged(nameof(FooterVisible));
-
             }
         }
         
@@ -59,37 +69,14 @@ namespace SightsNavigator.ViewModels
         //FUNCTIONS - start
         private async void onSearchSights()
         {
-            City city = await service.GetCityAsync("Moscow");
-            if (city.SightList is not null)
-            {
-                if (city.SightList.Count == 0) return;
-                Sights.Clear();
-                for (int i = 0; i < city.SightList.Count(); i++)
-                {
-                    Sights.Insert(0, city.SightList[i]);
-                }
-            }
+            //Step 1 -- find the city
+            await FindNewCity();
 
-            if (city is not null)
-            {
-                if (city.ListOfXids is not null || city.ListOfXids.Count() != 0)
-                {
-                    var GoogleIds = new List<string>();
-                    var sights = city.SightList.ToList();
+            //Step 2 -- redefind the sights of this city
+            RedefindSights();
 
-                    for (int i = 0; i < sights.Count(); i++)
-                    {
-                        var xid = sights[i].Xid.ToString();
-                        var name = sights[i].Name.ToString();
-                        var address = sights[i].SightAddress;
-                        var suburb = address.SubUrb;
-                        var pedestrians = address.Pedestrian;
-                        //string place_id = await webservice.GetGooglePlaceIdAsync(
-                        //    String.IsNullOrEmpty(name) ? pedestrians : name
-                        //    );
-                    }
-                }
-            }
+            //Step 3 -- LoadMore
+            await onLoadMoreCommand();
         }
 
           
@@ -105,7 +92,7 @@ namespace SightsNavigator.ViewModels
             }
             var lastVisibleItemIndex = e.LastVisibleItemIndex;
             var lastItemIndex = items.Count - 1;
-
+            
             if(lastItemIndex == lastVisibleItemIndex)
             {
                 FooterVisible = true;
@@ -115,13 +102,87 @@ namespace SightsNavigator.ViewModels
             {
                 FooterVisible = false;
             }
-
-            
-            
-            System.Diagnostics.Debug.WriteLine("Showing footer");
         }
 
-       
+        /// <summary>
+        /// Method finds new city according to the search query
+        /// </summary>
+        private async Task FindNewCity()
+        {
+            city = await service.GetCityAsync("Moscow");
+        }
+
+        /// <summary>
+        /// Method <c>RedefindSights</c> clears the existing list of Sights, and reinitialize according to the city
+        /// </summary>
+        private void RedefindSights() 
+        {
+            if (city.SightList == null) return;
+            if (city.SightList.Count == 0) return;
+            Sights.Clear(); // clear
+            _start = 0; // start from zero
+            _end = city.ListOfXids.Count(); // end to Count
+            for (int i = 0; i < city.SightList.Count(); i++)
+            {
+                Sights.Insert(0, city.SightList[i]);
+            }
+        }
+
+        /// <summary>
+        /// Method loads more data to the list
+        /// </summary>
+        private async Task onLoadMoreCommand()
+        {
+            int sec = 2;
+            var beginmeasure = DateTime.UtcNow;
+            await DelayFor(sec);
+            var endmeasure = DateTime.UtcNow;
+            Debug.WriteLine($"delay was: {endmeasure - beginmeasure}");
+
+            if (city == null) return;
+            if (city.ListOfXids == null) return;
+            if (city.ListOfXids.Count == 0) return;
+            Debug.WriteLine("Load More...");
+            //define the step
+            _end = city.ListOfXids.Count();
+            int step = _defaultStep;
+
+            if (_end - _start <= _defaultStep)
+                step = _end - _start;
+            else if (_end - _start > _defaultStep)
+                step = _defaultStep;
+
+            int from = _start;
+            int to = _start + step;
+            Debug.Print($"[from = {from}, to = {to}, overall = {_end} ]");
+
+            var slice = city.ListOfXids.GetRange(from, step);//from = intial point, step = count
+
+            var chunkOfSights = await service.GetChunckOfSights(slice);
+
+            if(chunkOfSights is not null)
+            {                
+                _start = to; 
+                foreach (var sight in chunkOfSights)
+                {
+                    city.SightList.Add(sight);
+                    Sights.Add(sight);                       
+                }
+
+                
+            }
+        }
+
+        /// <summary>
+        /// Delays your thread for some seconds
+        /// </summary>
+        /// <param name="sec">seconds for delay</param>
+        private async Task DelayFor(int sec)
+        {
+            int mills = 1000;
+            await Task.Delay(mills * sec);
+        }
+
 
         private async Task PageAppearing()
         {

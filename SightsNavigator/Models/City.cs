@@ -32,7 +32,7 @@ namespace SightsNavigator.Models
         public List<string> ListOfXids { get => _xidList; set => _xidList = value; }
         private List<String> _xidList;
 
-        public List<Sight> SightList { get; set; }
+        public List<Sight> SightList = new List<Sight>();
         
 
         public class Sight
