@@ -24,9 +24,9 @@ public partial class MainPage : ContentPage
         _sightViewModel.onSightsScrolled(sender, e);
     }
 
-    private void RemainingCollectionReached()
+    private async void RemainingCollectionReached()
     {
-
+       
     }
 }
 

@@ -1,45 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MvvmHelpers;
+using SightsNavigator.Views;
+using MvvmHelpers.Commands;
 using SightsNavigator.Models;
 using SightsNavigator.Services;
-
-using System.Diagnostics;
-using System.Globalization;
+using SightsNavigator.Services.SightService;
 using System.Windows.Input;
 using Command = MvvmHelpers.Commands.Command;
-using CommunityToolkit.Mvvm.ComponentModel;
-using MvvmHelpers.Commands;
-using SightsNavigator.Services.SightService;
-using System.Collections.ObjectModel;
-using MvvmHelpers;
-using Microsoft.Maui.Layouts;
 using Debug = System.Diagnostics.Debug;
-
+using SightsNavigator.Services.NavigationService;
 
 namespace SightsNavigator.ViewModels
 {
     class SearchCitySightsViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
     {
+        public INavigationService Navigation => DependencyService.Get<INavigationService>();
         public ISightRequest service => DependencyService.Get<ISightRequest>();
         public IWebRequest webservice => DependencyService.Get<IWebRequest>();
         public ObservableRangeCollection<City.Sight> Sights { get; set; }
-        public SearchCitySightsViewModel() {
+        public SearchCitySightsViewModel()
+        {
             PageAppearingCommand = new AsyncCommand(PageAppearing);
             SearchSightsCommand = new Command(onSearchSights);
             Sights = new ObservableRangeCollection<City.Sight>();
             FooterVisible = false;
             LoadMoreCommand = new AsyncCommand(onLoadMoreCommand);
-            
+            SelectedItemCommand = new Command(onSelectedSight);
         }
+
+
 
         // COMMANDS - start
         public AsyncCommand PageAppearingCommand { get; set; }
         public ICommand SearchSightsCommand { get; set; }
         public ICommand LoadMoreCommand { get; set; }
-        public CollectionView SightsCollectionView {get;set;}
+        public CollectionView SightsCollectionView { get; set; }
+        public ICommand SelectedItemCommand { get; set; }
 
         // COMMANDS - end
 
@@ -50,17 +45,19 @@ namespace SightsNavigator.ViewModels
         private int _defaultStep = 7; // default step of chunck
 
         private City city; //city
-        
-        
-        public bool FooterVisible {
+
+
+        public bool FooterVisible
+        {
             get => _footerVisible;
-            set {
-                if(_footerVisible != value)
-                   _footerVisible = value;
+            set
+            {
+                if (_footerVisible != value)
+                    _footerVisible = value;
                 OnPropertyChanged(nameof(FooterVisible));
             }
         }
-        
+
         private bool _footerVisible = false;
         //Properties - end
 
@@ -79,30 +76,44 @@ namespace SightsNavigator.ViewModels
             await onLoadMoreCommand();
         }
 
-          
+
         public void onSightsScrolled(object sender, ItemsViewScrolledEventArgs e)
         {
             //page injection
             var collectionView = sender as CollectionView;
-            var items = collectionView.ItemsSource as IList<City.Sight>; 
-            if (items == null || items.Count == 0 )
+            var items = collectionView.ItemsSource as IList<City.Sight>;
+            if (items == null || items.Count == 0)
             {
                 FooterVisible = false;
                 return;
             }
             var lastVisibleItemIndex = e.LastVisibleItemIndex;
             var lastItemIndex = items.Count - 1;
-            
-            if(lastItemIndex == lastVisibleItemIndex)
+            //var lastItemIndex = BindableLayout.GetItemsSource(collectionView).Cast<object>().Count() - 1;
+            //var lastItemIndex = BindableLayout.GetItemsSource(collectionView)?.Cast<object>().Count() - 1 ?? -1;
+
+            //if(lastItemIndex == lastVisibleItemIndex)
+            //if (lastItemIndex >= 0 && lastVisibleItemIndex >= 0 && lastItemIndex == lastVisibleItemIndex)
+            //{
+            //    FooterVisible = true;
+
+            //}
+            //else
+            //{              
+            //    FooterVisible = false;
+            //}
+
+            if (lastVisibleItemIndex >= lastItemIndex)
             {
                 FooterVisible = true;
-
             }
             else
             {
                 FooterVisible = false;
             }
         }
+
+
 
         /// <summary>
         /// Method finds new city according to the search query
@@ -115,7 +126,7 @@ namespace SightsNavigator.ViewModels
         /// <summary>
         /// Method <c>RedefindSights</c> clears the existing list of Sights, and reinitialize according to the city
         /// </summary>
-        private void RedefindSights() 
+        private void RedefindSights()
         {
             if (city.SightList == null) return;
             if (city.SightList.Count == 0) return;
@@ -160,16 +171,20 @@ namespace SightsNavigator.ViewModels
 
             var chunkOfSights = await service.GetChunckOfSights(slice);
 
-            if(chunkOfSights is not null)
-            {                
-                _start = to; 
+            if (chunkOfSights is not null)
+            {
+                _start = to;
                 foreach (var sight in chunkOfSights)
                 {
-                    city.SightList.Add(sight);
-                    Sights.Add(sight);                       
+                    //if (!String.Equals(sight.Image, "ERROR_DECODE_IMAGE"))
+                    //{
+                        city.SightList.Add(sight);
+                        Sights.Add(sight);
+                   // }
+                    
                 }
 
-                
+
             }
         }
 
@@ -182,6 +197,18 @@ namespace SightsNavigator.ViewModels
             int mills = 1000;
             await Task.Delay(mills * sec);
         }
+
+        public City.Sight SightSelected { get => _sightSelected; set => _sightSelected = value; }
+        private City.Sight _sightSelected;
+        private async void onSelectedSight()
+        {
+            if (_sightSelected == null) return;
+            await Navigation.PushAsync(new DetailedPage(_sightSelected));
+        }
+
+
+
+
 
 
         private async Task PageAppearing()

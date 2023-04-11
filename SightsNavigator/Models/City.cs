@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SightsNavigator.Models
 {
-    internal class City
+    public class City
     {
         //public fields
         public string Name { get => _name; set => _name = value; }

@@ -91,10 +91,9 @@ namespace SightsNavigator.Services.SightService
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="city"></param>
-        /// <param name="radius"></param>
+        /// <param name="city">An object of the City class</param>
+        /// <param name="radius">Radius in meters</param>
         /// <returns></returns>
-
         public async Task<IEnumerable<String>> GetSightsListOfCityAsync(City city, double radius)
         {
             if (city is null)
@@ -162,6 +161,7 @@ namespace SightsNavigator.Services.SightService
                     var sight = ParseTheSight(converter);
                     if(sight is not null)
                     {
+                        //if(String.Equals(sight.Image, _errorImageDecode))
                         sights.Add(sight);
                     }
                 }
@@ -188,7 +188,7 @@ namespace SightsNavigator.Services.SightService
             sight.Xid = xid;
 
             //Address
-            ParseSightAddress(converter);
+            sight.SightAddress = ParseSightAddress(converter);
 
             //Wikipedia_extracts 
             var wikipedia_extracts = converter.wikipedia_extracts;
@@ -224,7 +224,8 @@ namespace SightsNavigator.Services.SightService
 
         private City.Sight.Address ParseSightAddress(dynamic converter)
         {
-            if (converter.address == null) return null;
+            if (converter.address == null)
+                return null;
             var Address = converter.address;
             string _city = TryParseJsonLine(Address.city);
             var _road = TryParseJsonLine(Address.road);
