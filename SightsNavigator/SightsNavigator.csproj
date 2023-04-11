@@ -53,6 +53,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AndroidResource Remove="Services\NavigationService\**" />
+	  <Compile Remove="Services\NavigationService\**" />
+	  <EmbeddedResource Remove="Services\NavigationService\**" />
+	  <MauiCss Remove="Services\NavigationService\**" />
+	  <MauiXaml Remove="Services\NavigationService\**" />
+	  <None Remove="Services\NavigationService\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="Resources\Images\blank_sight_1.jpg" />
 	  <None Remove="Resources\Images\blank_sight_2.jpg" />
 	  <None Remove="Views\DetailedPage.xaml~RF8b6b20f4.TMP" />

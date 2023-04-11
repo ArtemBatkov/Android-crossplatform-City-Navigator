@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SightsNavigator.Models;
 
 namespace SightsNavigator.ViewModels
 {
@@ -11,8 +12,12 @@ namespace SightsNavigator.ViewModels
     class DetailedPageSightViewModel
     {
 
+        public City.Sight SelectedSight;
+
+
         public DetailedPageSightViewModel()
         {
+            SelectedSight = ViewModelLocator.GetViewModel<City.Sight>(nameof(Views.DetailedPage));
             PageAppearingCommand = new AsyncCommand(PageAppearing);
         }
 

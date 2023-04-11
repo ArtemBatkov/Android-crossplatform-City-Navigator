@@ -7,13 +7,13 @@ using SightsNavigator.Services.SightService;
 using System.Windows.Input;
 using Command = MvvmHelpers.Commands.Command;
 using Debug = System.Diagnostics.Debug;
-using SightsNavigator.Services.NavigationService;
+//using SightsNavigator.Services.NavigationService;
 
 namespace SightsNavigator.ViewModels
 {
     class SearchCitySightsViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
     {
-        public INavigationService Navigation => DependencyService.Get<INavigationService>();
+        //public INavigationService Navigation => DependencyService.Get<INavigationService>();
         public ISightRequest service => DependencyService.Get<ISightRequest>();
         public IWebRequest webservice => DependencyService.Get<IWebRequest>();
         public ObservableRangeCollection<City.Sight> Sights { get; set; }
@@ -203,8 +203,10 @@ namespace SightsNavigator.ViewModels
         private async void onSelectedSight()
         {
             if (_sightSelected == null) return;
-            await Navigation.PushAsync(new DetailedPage(_sightSelected));
-            //await Shell.Current.GoToAsync(nameof(Views.DetailedPage));
+            //await Navigation.PushAsync(new DetailedPage(_sightSelected));
+
+            ViewModelLocator.SetViewModel(nameof(Views.DetailedPage), _sightSelected);
+            await Shell.Current.GoToAsync(nameof(Views.DetailedPage));
         }
 
 
