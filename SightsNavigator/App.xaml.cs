@@ -8,18 +8,22 @@ namespace SightsNavigator;
 
 public partial class App : Application
 {
-   // private City.Sight _selectedItem = new City.Sight();
+    private City.Sight _selectedItem = new City.Sight();
 	public App()
 	{
 		InitializeComponent();
         DependencyService.Register<SightRequest>();     
         DependencyService.Register<WebRequest>();
-       //  DependencyService.Register<NavigationService>();
 
+        INavigation navigation = MainPage.Navigation;
+        DependencyService.Register<INavigation>(navigation);
+        DependencyService.Register<INavigationService>(() => new NavigationService(navigation));
 
-        MainPage = new AppShell();
-        //MainPage = new NavigationPage(new MainPage()); // задаем главную страницу как NavigationPage
+        _selectedItem.Description = "DESCRIPTION";
+
+        //MainPage = new AppShell();
+        MainPage = new NavigationPage(new MainPage());
         //MainPage.Navigation.PushAsync(new DetailedPage(_selectedItem));
-
+        //MainPage.Navigation.Add(new DetailedPage(_selectedItem));
     }
 }

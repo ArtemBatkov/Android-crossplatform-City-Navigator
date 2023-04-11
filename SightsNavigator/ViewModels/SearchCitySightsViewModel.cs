@@ -204,6 +204,7 @@ namespace SightsNavigator.ViewModels
         {
             if (_sightSelected == null) return;
             await Navigation.PushAsync(new DetailedPage(_sightSelected));
+            //await Shell.Current.GoToAsync(nameof(Views.DetailedPage));
         }
 
 

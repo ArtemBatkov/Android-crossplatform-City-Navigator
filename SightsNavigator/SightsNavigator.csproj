@@ -55,6 +55,7 @@
 	<ItemGroup>
 	  <None Remove="Resources\Images\blank_sight_1.jpg" />
 	  <None Remove="Resources\Images\blank_sight_2.jpg" />
+	  <None Remove="Views\DetailedPage.xaml~RF8b6b20f4.TMP" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -64,7 +65,6 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
-		<PackageReference Include="Xamarin.Forms" Version="5.0.0.2578" />
 	</ItemGroup>
 
 	<ItemGroup>

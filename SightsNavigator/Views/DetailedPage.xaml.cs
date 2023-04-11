@@ -5,8 +5,8 @@ namespace SightsNavigator.Views;
 public partial class DetailedPage : ContentPage
 {
 	private City.Sight _sight; 
-	public DetailedPage(City.Sight sight)
-	{
+	public DetailedPage(City.Sight sight)//City.Sight sight
+    {
 		_sight = sight;
 		InitializeComponent();
 	}
