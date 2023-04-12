@@ -6,11 +6,21 @@
              xmlns:viewmodels="clr-namespace:SightsNavigator.ViewModels"
              xmlns:models="clr-namespace:SightsNavigator.Models"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             Title="DETAILED_PAGE">
-
+             Title="DETAILED_PAGE"
+             xmlns:converter="clr-namespace:SightsNavigator.Views.Converters"
+             xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps">
+    
+    <!--
     <ContentPage.BindingContext>
         <viewmodels:DetailedPageSightViewModel/>
     </ContentPage.BindingContext>
+    -->
+    <ContentPage.Resources>
+        <converter:ImageConverter x:Key="ImageConverter"/>
+    </ContentPage.Resources>
+
+
+
 
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior
@@ -18,10 +28,36 @@
             Command="{Binding PageAppearingCommand}"/>
     </ContentPage.Behaviors>
 
-    <VerticalStackLayout >
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+    <ScrollView>
+        <VerticalStackLayout >
+            <Label 
+                IsVisible="{Binding HasName}"
+                Text="{Binding DName}"             
+                VerticalOptions="Center" 
+                HorizontalOptions="Center" />
+            <Label 
+                IsVisible="{Binding HasAddress}"
+                Text="{Binding DAddress}"             
+                VerticalOptions="Center" 
+                HorizontalOptions="Center" />
+            <Image                                                                     
+                Aspect="AspectFit"                                      
+                Source="{Binding DImage, Converter={StaticResource ImageConverter}}"
+               />
+            <Label
+                Text="{Binding DDescription}"
+                HorizontalOptions="FillAndExpand"
+                LineBreakMode="WordWrap"
+                />
+            
+             
+            <maps:Map MapType="Street">
+                <maps:Map.Pins>
+                    <maps:Pin Location="{Binding DLocation}"/>
+                </maps:Map.Pins>
+            </maps:Map> 
+
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

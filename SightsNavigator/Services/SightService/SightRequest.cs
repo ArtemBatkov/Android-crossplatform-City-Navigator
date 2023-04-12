@@ -187,6 +187,12 @@ namespace SightsNavigator.Services.SightService
             string xid = ParseSightXid(converter);
             sight.Xid = xid;
 
+            //Lat/Lon
+            double lat = converter.point.lat;
+            double lon = converter.point.lon;
+            sight.Lat = lat;
+            sight.Lon = lon;
+
             //Address
             sight.SightAddress = ParseSightAddress(converter);
 

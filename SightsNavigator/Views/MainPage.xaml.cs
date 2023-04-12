@@ -12,8 +12,10 @@ public partial class MainPage : ContentPage
     private SearchCitySightsViewModel _sightViewModel;
 	public MainPage()
 	{
-		InitializeComponent();
+		InitializeComponent();       
         _sightViewModel= new SearchCitySightsViewModel();
+        _sightViewModel.navigation = Navigation;
+
 
         BindingContext = _sightViewModel;
         _sightViewModel.SightsCollectionView = myCV;

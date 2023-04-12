@@ -17,6 +17,8 @@ namespace SightsNavigator.ViewModels
         public ISightRequest service => DependencyService.Get<ISightRequest>();
         public IWebRequest webservice => DependencyService.Get<IWebRequest>();
         public ObservableRangeCollection<City.Sight> Sights { get; set; }
+
+        public INavigation navigation; 
         public SearchCitySightsViewModel()
         {
             PageAppearingCommand = new AsyncCommand(PageAppearing);
@@ -203,7 +205,9 @@ namespace SightsNavigator.ViewModels
         private async void onSelectedSight()
         {
             if (_sightSelected == null) return;
-            await Navigation.PushAsync(new DetailedPage(_sightSelected));
+            await navigation.PushAsync(new DetailedPage(_sightSelected));
+            SightSelected = null;
+            OnPropertyChanged(nameof(SightSelected));
             //await Shell.Current.GoToAsync(nameof(Views.DetailedPage));
         }
 

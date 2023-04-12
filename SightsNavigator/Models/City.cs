@@ -39,7 +39,8 @@ namespace SightsNavigator.Models
         {
             public string Name { get => _name; set => _name = value; }
             public string Xid { get => _xid; set => _xid = value; }
-
+            public double Lat { get => _lat; set => _lat = value; }
+            public double Lon { get => _lon; set => _lon = value; }
 
             public string Image { get => _image; set => _image = value; }
 
@@ -48,6 +49,8 @@ namespace SightsNavigator.Models
 
             private string _xid;
             private string _name;
+            private double _lat;
+            private double _lon;
             private string _image;
             private string _description;
             private Address _addr;
