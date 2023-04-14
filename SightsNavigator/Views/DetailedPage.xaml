@@ -50,13 +50,13 @@
                 LineBreakMode="WordWrap"
                 />
             
-             
+            
             <maps:Map MapType="Street">
                 <maps:Map.Pins>
                     <maps:Pin Location="{Binding DLocation}"/>
                 </maps:Map.Pins>
             </maps:Map> 
-
+ 
 
         </VerticalStackLayout>
     </ScrollView>

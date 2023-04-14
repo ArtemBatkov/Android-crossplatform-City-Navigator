@@ -13,7 +13,7 @@ namespace SightsNavigator.ViewModels
 {
     class SearchCitySightsViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
     {
-        public INavigationService Navigation => DependencyService.Get<INavigationService>();
+        //public INavigationService Navigation => DependencyService.Get<INavigationService>();
         public ISightRequest service => DependencyService.Get<ISightRequest>();
         public IWebRequest webservice => DependencyService.Get<IWebRequest>();
         public ObservableRangeCollection<City.Sight> Sights { get; set; }
