@@ -8,17 +8,19 @@ using System.Windows.Input;
 using Command = MvvmHelpers.Commands.Command;
 using Debug = System.Diagnostics.Debug;
 using SightsNavigator.Services.NavigationService;
+using SightsNavigator.Views.Converters;
 
 namespace SightsNavigator.ViewModels
 {
     class SearchCitySightsViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
     {
+        public IServiceProvider ServiceProvider { get; set; }
         //public INavigationService Navigation => DependencyService.Get<INavigationService>();
         public ISightRequest service => DependencyService.Get<ISightRequest>();
         public IWebRequest webservice => DependencyService.Get<IWebRequest>();
         public ObservableRangeCollection<City.Sight> Sights { get; set; }
 
-        public INavigation navigation; 
+        public INavigation navigation;
         public SearchCitySightsViewModel()
         {
             PageAppearingCommand = new AsyncCommand(PageAppearing);
@@ -27,10 +29,9 @@ namespace SightsNavigator.ViewModels
             FooterVisible = false;
             LoadMoreCommand = new AsyncCommand(onLoadMoreCommand);
             SelectedItemCommand = new Command(onSelectedSight);
+            onTripPageCommand = new AsyncCommand(gotoTripPage);
         }
-
-
-
+        
         // COMMANDS - start
         public AsyncCommand PageAppearingCommand { get; set; }
         public ICommand SearchSightsCommand { get; set; }
@@ -38,6 +39,7 @@ namespace SightsNavigator.ViewModels
         public CollectionView SightsCollectionView { get; set; }
         public ICommand SelectedItemCommand { get; set; }
 
+        public AsyncCommand onTripPageCommand { get; set; }
         // COMMANDS - end
 
 
@@ -205,14 +207,17 @@ namespace SightsNavigator.ViewModels
         private async void onSelectedSight()
         {
             if (_sightSelected == null) return;
-            await navigation.PushAsync(new DetailedPage(_sightSelected));
+            await navigation.PushAsync(new DetailedPage(city, _sightSelected, ServiceProvider));
             SightSelected = null;
             OnPropertyChanged(nameof(SightSelected));
             //await Shell.Current.GoToAsync(nameof(Views.DetailedPage));
         }
 
 
-
+        private async Task gotoTripPage()
+        {
+            await navigation.PushAsync(new TripPage());
+        }
 
 
 

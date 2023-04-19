@@ -10,11 +10,15 @@ public partial class MainPage : ContentPage
 {
 	 
     private SearchCitySightsViewModel _sightViewModel;
-	public MainPage()
+
+    private IServiceProvider serviceProvider;
+	public MainPage(IServiceProvider serviceProvider)
 	{
-		InitializeComponent();       
+		InitializeComponent();
+        this.serviceProvider = serviceProvider;
         _sightViewModel= new SearchCitySightsViewModel();
         _sightViewModel.navigation = Navigation;
+        _sightViewModel.ServiceProvider = serviceProvider;
 
 
         BindingContext = _sightViewModel;

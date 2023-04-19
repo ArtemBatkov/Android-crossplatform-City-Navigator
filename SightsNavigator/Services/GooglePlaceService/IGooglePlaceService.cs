@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SightsNavigator.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace SightsNavigator.Services.GooglePlaceService
 {
     internal interface IGooglePlaceService
     {
-        public Task<String> GetGooglePlaceIdAsync(string name);
+        public Task<GooglePlace> getDataFromGoogle(GooglePlace google);
     }
 }

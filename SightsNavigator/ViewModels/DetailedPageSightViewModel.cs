@@ -4,16 +4,27 @@ using SightsNavigator.Models;
 using Microsoft.Maui.Controls.Maps;
 using System.Diagnostics;
 
+using SightsNavigator.Services;
+using SightsNavigator.Services.GooglePlaceService;
+
 namespace SightsNavigator.ViewModels
 {
 
     class DetailedPageSightViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
     {
-        public DetailedPageSightViewModel() { }
+        
 
         private readonly City.Sight sight;
-        public DetailedPageSightViewModel(City.Sight sight)
+        private City city;
+
+        private IGooglePlaceService _googleservices;
+        public IGooglePlaceService Googleservices { get => _googleservices; set => _googleservices = value; } //=> DependencyService.Get<IGooglePlaceService>();
+        public IServiceProvider ServiceProvider { get; set; }
+
+        public DetailedPageSightViewModel(City city, City.Sight sight)
         {
+            //this._googleservices = ServiceProvider.GetService<IGooglePlaceService>();
+            this.city = city;
             this.sight = sight;
             PageAppearingCommand = new AsyncCommand(PageAppearing);
             _dName = sight.Name;
@@ -32,11 +43,15 @@ namespace SightsNavigator.ViewModels
                 Debugger.Log(0, "Error", ex.ToString());
             }
             WhatIsVisible();
+            AddRemoveFavouriteCommand = new AsyncCommand(onAddRemovePressed);
         }
+
+        
 
 
         // COMMANDS - start
         public AsyncCommand PageAppearingCommand { get; set; }
+        public AsyncCommand AddRemoveFavouriteCommand { get; set; }
         // COMMANDS - end
 
 
@@ -65,6 +80,11 @@ namespace SightsNavigator.ViewModels
         private double _dlat;
         private double _dlon;
 
+        public string ImageState { get => _imagestate; set => _imagestate = value; }
+        private string _imagestate = "heart_empty.png";
+
+        private bool _wasAddedToTripList = false;
+
         public Location DLocation { get; set; }
         private void WhatIsVisible()
         {
@@ -77,6 +97,40 @@ namespace SightsNavigator.ViewModels
                 HasName = false;
             }
             HasAddress = !HasName;
+        }
+
+        private async Task onAddRemovePressed()
+        {
+            _wasAddedToTripList = !_wasAddedToTripList;
+            if (TripListModel.CityExists(city))
+            {
+
+            }
+            else
+            {
+                var google = new GooglePlace(city);                
+                google = await _googleservices.getDataFromGoogle(google);
+                city.Backgrounds = google.GooglePlacePhotoCandidates;
+                city.FavouriteSights.Insert(0, sight);
+                TripListModel.AddTrip(city);
+            }
+
+            ChangeFavouriteButtonState();
+            
+            
+        }
+
+        private void ChangeFavouriteButtonState()
+        {
+            if (_wasAddedToTripList)
+            {
+                ImageState = "heart_filled.png";               
+            }
+            else
+            {
+                ImageState = "heart_empty.png";
+            }
+            OnPropertyChanged(nameof(ImageState));
         }
 
 

@@ -8,7 +8,43 @@ namespace SightsNavigator.Models
 {
     public class City
     {
+
         //public fields
+        public string DefaultBackground { get => _defaultbg; }
+        private static string _defaultbg = "trip_blank.png";
+
+
+        public string CurrentBackground
+        {
+            get => _currentbackground;
+            set => _currentbackground = value;
+        }
+        private string _currentbackground = _defaultbg;
+        
+        public List<string> Backgrounds
+        {
+            get
+            {
+                return _backgrounds;
+            }
+            set
+            {
+                if(value.Count > 0)
+                {
+                    _backgrounds = value;
+                    if (_currentbackground.Equals(_defaultbg))
+                    {
+                        _currentbackground = _backgrounds[0];
+                    }
+                }
+            }
+        }
+        private List<string> _backgrounds;
+
+
+        public List<Sight> FavouriteSights = new List<Sight>();
+
+
         public string Name { get => _name; set => _name = value; }
         public string Country { get => _country; set => _country = value; }
         public double Lat { get => _latitude; set => _latitude = value; }
@@ -45,6 +81,9 @@ namespace SightsNavigator.Models
             public string Image { get => _image; set => _image = value; }
 
             
+
+
+
             public string Description { get => _description; set => _description = value; }
 
             private string _xid;
@@ -55,6 +94,7 @@ namespace SightsNavigator.Models
             private string _description;
             private Address _addr;
 
+           
             public Address SightAddress { get => _addr; set => _addr = value; }
 
             public class Address

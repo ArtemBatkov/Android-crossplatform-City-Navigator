@@ -30,6 +30,16 @@
 
     <ScrollView>
         <VerticalStackLayout >
+
+            <Button
+                Text="Add to Favourite"
+                Command="{Binding AddRemoveFavouriteCommand}"
+                ImageSource="{Binding ImageState}">          
+                
+                
+
+            </Button>
+
             <Label 
                 IsVisible="{Binding HasName}"
                 Text="{Binding DName}"             
@@ -49,14 +59,18 @@
                 HorizontalOptions="FillAndExpand"
                 LineBreakMode="WordWrap"
                 />
-            
-            
+
+            <!--
             <maps:Map MapType="Street">
                 <maps:Map.Pins>
                     <maps:Pin Location="{Binding DLocation}"/>
                 </maps:Map.Pins>
             </maps:Map> 
- 
+            
+             -->
+            
+            
+            
 
         </VerticalStackLayout>
     </ScrollView>

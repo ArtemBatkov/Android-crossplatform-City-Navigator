@@ -55,13 +55,18 @@
 	<ItemGroup>
 	  <None Remove="Resources\Images\blank_sight_1.jpg" />
 	  <None Remove="Resources\Images\blank_sight_2.jpg" />
+	  <None Remove="Resources\Images\heart_empty.png" />
+	  <None Remove="Resources\Images\heart_filled.png" />
+	  <None Remove="Resources\Images\trip_blank.png" />
 	  <None Remove="Views\DetailedPage.xaml~RF8b6b20f4.TMP" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Autofac" Version="7.0.1" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="5.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
 		<PackageReference Include="Google.Apis.Script.v1" Version="1.60.0.2638" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Maui.Controls.Maps" Version="7.0.81" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -75,6 +80,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Views\TripDetailedPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\TripPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\DetailedPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

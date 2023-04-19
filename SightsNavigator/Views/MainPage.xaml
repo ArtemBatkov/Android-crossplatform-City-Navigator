@@ -31,7 +31,15 @@
         <Color x:Key="searchbg">#c0c0c0</Color>
     </ContentPage.Resources>
 
-
+    <NavigationPage.TitleView>
+      
+        <StackLayout  
+            Orientation="Horizontal" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand">
+            <Button Text="Trip" Background="Wheat" Command="{Binding onTripPageCommand}" />
+        </StackLayout>
+    </NavigationPage.TitleView>
+    
+    
 
 
     <Grid ColumnDefinitions="3*,1*" RowDefinitions="0.1*,*">
