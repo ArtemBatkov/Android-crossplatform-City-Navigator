@@ -35,7 +35,7 @@ namespace SightsNavigator.ViewModels
         // COMMANDS - start
         public AsyncCommand PageAppearingCommand { get; set; }
         public ICommand SearchSightsCommand { get; set; }
-        public ICommand LoadMoreCommand { get; set; }
+        public AsyncCommand LoadMoreCommand { get; set; }
         public CollectionView SightsCollectionView { get; set; }
         public ICommand SelectedItemCommand { get; set; }
 
@@ -70,14 +70,21 @@ namespace SightsNavigator.ViewModels
         //FUNCTIONS - start
         private async void onSearchSights()
         {
+            IsLoad = true;            
+            OnPropertyChanged(nameof(Sights));
             //Step 1 -- find the city
             await FindNewCity();
 
             //Step 2 -- redefind the sights of this city
-            RedefindSights();
+            RedefindSights();            
+          
 
             //Step 3 -- LoadMore
             await onLoadMoreCommand();
+           
+            //Sights.Clear();
+            IsLoad = false;
+            HasNothingFound = (Sights.Count == 0)  ? true : false;
         }
 
 
@@ -110,11 +117,13 @@ namespace SightsNavigator.ViewModels
             if (lastVisibleItemIndex >= lastItemIndex)
             {
                 FooterVisible = true;
+               
             }
             else
             {
                 FooterVisible = false;
             }
+            OnPropertyChanged(nameof(FooterVisible));
         }
 
 
@@ -124,7 +133,7 @@ namespace SightsNavigator.ViewModels
         /// </summary>
         private async Task FindNewCity()
         {
-            city = await service.GetCityAsync("Moscow");
+            city = await service.GetCityAsync(_query);
         }
 
         /// <summary>
@@ -133,14 +142,16 @@ namespace SightsNavigator.ViewModels
         private void RedefindSights()
         {
             if (city.SightList == null) return;
-            if (city.SightList.Count == 0) return;
+            //if (city.SightList.Count == 0) return;
             Sights.Clear(); // clear
             _start = 0; // start from zero
             _end = city.ListOfXids.Count(); // end to Count
-            for (int i = 0; i < city.SightList.Count(); i++)
-            {
-                Sights.Insert(0, city.SightList[i]);
-            }
+            //for (int i = 0; i < city.SightList.Count(); i++)
+            //{
+            //    Sights.Insert(0, city.SightList[i]);
+            //}
+            OnPropertyChanged(nameof(Sights));
+            OnPropertyChanged(nameof(city));
         }
 
         /// <summary>
@@ -148,15 +159,34 @@ namespace SightsNavigator.ViewModels
         /// </summary>
         private async Task onLoadMoreCommand()
         {
+            TextLM = $"\t\t\t";
+            IsLMSpinnerVisible = true;
             int sec = 2;
             var beginmeasure = DateTime.UtcNow;
             await DelayFor(sec);
             var endmeasure = DateTime.UtcNow;
             Debug.WriteLine($"delay was: {endmeasure - beginmeasure}");
 
-            if (city == null) return;
-            if (city.ListOfXids == null) return;
-            if (city.ListOfXids.Count == 0) return;
+            if (city == null)
+            {
+                TextLM = "Load More";
+                IsLMSpinnerVisible = false;
+                return;
+            }
+
+            if (city.ListOfXids == null)
+            {
+                TextLM = "Load More";
+                IsLMSpinnerVisible = false;
+                return;
+            }
+            
+            if (city.ListOfXids.Count == 0) {
+                TextLM = "Load More";
+                IsLMSpinnerVisible = false;
+                return;
+            }
+
             Debug.WriteLine("Load More...");
             //define the step
             _end = city.ListOfXids.Count();
@@ -187,9 +217,9 @@ namespace SightsNavigator.ViewModels
                    // }
                     
                 }
-
-
             }
+            TextLM = "Load More";
+            IsLMSpinnerVisible = false;
         }
 
         /// <summary>
@@ -216,7 +246,7 @@ namespace SightsNavigator.ViewModels
 
         private async Task gotoTripPage()
         {
-            await navigation.PushAsync(new TripPage());
+            await navigation.PushAsync(new TripPage(ServiceProvider));
         }
 
 
@@ -232,6 +262,67 @@ namespace SightsNavigator.ViewModels
             System.Diagnostics.Debug.WriteLine($"Visible: {_footerVisible}");
         }
         //FUNCTIONS - end
+
+
+
+        public String Query
+        {
+            get => _query;
+            set => _query = value;
+        }
+        private string _query = "Saint-Petersburg";
+
+
+        private bool _isload = false;
+        public bool IsLoad { get => _isload; set
+            {
+                _isload = value;
+                IsVisibleStack = _isload || _nothingFound;               
+                OnPropertyChanged(nameof(IsLoad));
+                OnPropertyChanged(nameof(IsVisibleStack));
+            }
+        }
+
+        private bool _nothingFound = false;
+        public bool HasNothingFound { get => _nothingFound; set
+            {
+                _nothingFound = value;
+                IsVisibleStack = _isload || _nothingFound;                
+                OnPropertyChanged(nameof(HasNothingFound));
+                OnPropertyChanged(nameof(IsVisibleStack));
+                OnPropertyChanged(nameof(IsLoad));
+            }
+        }
+        
+
+        public bool IsVisibleStack
+        {
+            get => _isVisibleStack; set
+            {
+                _isVisibleStack = value;
+                OnPropertyChanged(nameof(IsVisibleStack));
+            }
+        }
+        private bool _isVisibleStack = false;
+
+
+        public bool IsLMSpinnerVisible { get => _isLMSpinnerVisible;
+            set {
+                _isLMSpinnerVisible = value;
+                OnPropertyChanged(nameof(IsLMSpinnerVisible));
+            }
+        }
+        private bool _isLMSpinnerVisible = false;
+
+
+
+        public string TextLM { get => _txtLM;
+                set {
+                _txtLM = value;
+                OnPropertyChanged(nameof(TextLM));
+            } 
+        }
+        private string _txtLM = "Load More";
 
 
 

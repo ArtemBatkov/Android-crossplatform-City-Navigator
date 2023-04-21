@@ -34,13 +34,13 @@ public partial class App : Application
         //.Build();
 
 
-        var dir = @"D:\Android C# Template Projects\SightsNavigator\SightsNavigator\secrets.json";
+        //var dir = @"D:\Android C# Template Projects\SightsNavigator\SightsNavigator\secrets.json";
 
-        var AppSettings = new ConfigurationBuilder()
-            .AddJsonFile(dir)
-            .Build();
+        //var AppSettings = new ConfigurationBuilder()
+        //    .AddJsonFile(dir)
+        //    .Build();
 
-        var gkey = AppSettings["GoogleMapsApiKey"];
+        //var gkey = AppSettings["GoogleMapsApiKey"];
        
         //DependencyService.Register<GooglePlaceService>((service, arg) =>
         //{

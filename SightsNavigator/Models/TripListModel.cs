@@ -42,7 +42,12 @@ namespace SightsNavigator.Models
 
         public static bool CityExists(City city)
         {
-            return _trips.Any(c => c.Name == city.Name);
+            return _trips.Any(c => c.Name.Equals(city.Name));
+        }
+
+        public static City getCityByName(string name){
+            var city = _trips.FirstOrDefault(c => c.Name.Equals(name));
+            return city;
         }
     }
 }

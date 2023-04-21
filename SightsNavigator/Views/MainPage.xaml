@@ -7,7 +7,7 @@
              xmlns:models="clr-namespace:SightsNavigator.Models"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:converter="clr-namespace:SightsNavigator.Views.Converters"
-           >
+             >
              
 
 
@@ -42,17 +42,34 @@
     
 
 
-    <Grid ColumnDefinitions="3*,1*" RowDefinitions="0.1*,*">
+    <Grid ColumnDefinitions="3*,1*" RowDefinitions="0.1*,Auto,*,Auto">
 
-        <Entry Grid.Row="0" Grid.Column="0" Text="Moscow" 
+       
+        
+        
+        <Entry Grid.Row="0" Grid.Column="0" Text="{Binding Query}" 
                Background="{StaticResource  searchbg}"
                TextColor="Black"/>
 
         <Button Grid.Row="0" Grid.Column="1" Text="Let's Find"
                 Command="{Binding SearchSightsCommand}"/>
 
+        <StackLayout
+                     Orientation="Vertical"
+            Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsVisible="{Binding IsVisibleStack}">
+            <ActivityIndicator 
+                IsRunning="{Binding IsLoad}" Color="red"/>
 
-        <Grid  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+            <Label Text="Sorry, nothing found" 
+                   TextColor="Black"
+                   HorizontalTextAlignment="Center"
+                   VerticalTextAlignment="Center"                   
+                   FontSize="22"
+                   IsVisible="{Binding HasNothingFound}"/>
+
+        </StackLayout>
+
+        <Grid  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
 
             <CollectionView                          
                 ItemsSource="{Binding Sights}"
@@ -60,52 +77,33 @@
                 x:Name="myCV"
                 SelectedItem="{Binding SightSelected}"
                 SelectionChangedCommand="{Binding SelectedItemCommand}"                
-                SelectionMode="Single">                
+                SelectionMode="Single">
 
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical"
+                           ItemSpacing="10"/>
+                </CollectionView.ItemsLayout>
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid RowDefinitions="0.25*,*" ColumnDefinitions="*"
-                               
-                              Margin="5,0,5,0">
+                        <Grid RowDefinitions="*" ColumnDefinitions="0.3*,0.7*"
+                               Margin="5,0,5,0">
 
                             <Label Grid.Row="0" 
-                                    Grid.Column="0"                                 
-                                  Background="Red"
+                                    Grid.Column="0"                                    
                                     x:Name="lb"
                                   Text="{Binding Converter={StaticResource TitleConverter}}"
-                                   >
+                                   FontSize="30"
+                                   FontAttributes="Bold"
+                                   />
 
-                             
-                                <!-- 
-                                <Label.Text>
-                                    <MultiBinding Converter="{StaticResource TitleConverter}">
-                                        <Binding Path="Name" Source="{Binding Sights}" />
-                                        <Binding Path="Address" Source="{Binding Sights}"/>
-                                        <Binding Source="{x:Reference myCV}" Path="BindingContext" />
-                                        <Binding Source="{RelativeSource Self}"/>
-                                        <Binding Source="{Binding model}" />
-                                    </MultiBinding>
-                                </Label.Text>
-                                -->
-                                
-                                
-                                 
-                                
-                            </Label>
 
-                            <Image Grid.Row="1"
-                                   Grid.Column="0"                                  
-                                   Aspect="AspectFit"                                                                  
-                                  Background="Green"
+                            <Image Grid.Row="0"
+                                   Grid.Column="1"                                  
+                                   Aspect="AspectFit"                                  
                                    Source="{Binding Image, Converter={StaticResource ImageConverter}}"
-                                   Margin="0,0,0,5">
-                                <!--
-                                <Image.Source>
-                                    <UriImageSource Uri="{Binding Image}" CacheValidity="1" CachingEnabled="true"/>
-                                </Image.Source>
-                                -->
-                            </Image>
+                                   Margin="0,0,0,5"
+                                   />
 
 
 
@@ -116,25 +114,31 @@
                                     Text="{Binding Description}" TextColor="Black"/>
                             -->
                              
-                        </Grid> 
-              
-                        
+                        </Grid>                         
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
 
-                <CollectionView.Footer>
-                    <Button Text="Load More" BackgroundColor="CornflowerBlue"
-                            TextColor="Wheat"
-                            HorizontalOptions="Center"
-                            IsVisible="{Binding FooterVisible}"
-                            Command="{Binding LoadMoreCommand}"
-                            Margin="10"
-                            />
-                </CollectionView.Footer>
+                
 
             </CollectionView>
 
+           
         </Grid>
+
+        <AbsoluteLayout  
+            Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" HorizontalOptions="Center">
+            <Button Text="{Binding TextLM}" BackgroundColor="CornflowerBlue" TextColor="Wheat" 
+            HorizontalOptions="Center" IsVisible="{Binding FooterVisible}" Command="{Binding LoadMoreCommand}">
+                
+            </Button>
+            <ActivityIndicator 
+                        IsVisible="{Binding IsLMSpinnerVisible}"       
+                        IsRunning="True" Color="DarkGreen" 
+                        AbsoluteLayout.LayoutBounds="0.5, 0.5, 50, 50" 
+                        AbsoluteLayout.LayoutFlags="PositionProportional">
+            </ActivityIndicator>
+        </AbsoluteLayout>
+
 
     </Grid>
 

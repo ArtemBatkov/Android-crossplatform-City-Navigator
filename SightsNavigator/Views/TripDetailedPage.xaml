@@ -8,22 +8,35 @@
              xmlns:models="clr-namespace:SightsNavigator.Models"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:converter="clr-namespace:SightsNavigator.Views.Converters"
-             
+             BackgroundImageSource="{Binding BackgroundImage}"
              >
 
 
+    <NavigationPage.TitleView>
+        <StackLayout  
+            Orientation="Horizontal" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand">
+            <Button Text="Edit" Background="lightblue" 
+                    TextColor="Black"
+                    Command="{Binding onTripEditPage}" />
+        </StackLayout>
+    </NavigationPage.TitleView>
+
+
+     
+        
+        
+
+    <!--
     <ContentPage.BackgroundImageSource>
         <UriImageSource Uri="{Binding BackgroundImage}" CacheValidity="1" />
     </ContentPage.BackgroundImageSource>
-     
-     
+     -->
 
-
-
-
+     <!--
     <ContentPage.BindingContext>
         <viewmodels:TripDetailedViewModel/>
     </ContentPage.BindingContext>
+    -->
 
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior
@@ -36,6 +49,8 @@
         <converter:ImageConverter x:Key="ImageConverter"/>
         <converter:TitleConverter x:Key="TitleConverter"/>
 
+         
+        
         <Color x:Key="searchbg">#c0c0c0</Color>
     </ContentPage.Resources>
 
@@ -46,10 +61,18 @@
                 SelectionChangedCommand="{Binding SelectedItemCommand}"                
                 SelectionMode="Single">
 
-
+        <CollectionView.ItemsLayout>
+            <LinearItemsLayout Orientation="Vertical"
+                           ItemSpacing="10"/>
+        </CollectionView.ItemsLayout>
+        
+        
+        
+        
         <CollectionView.ItemTemplate>
             <DataTemplate>
-                <Grid RowDefinitions="*" ColumnDefinitions="0.3*, 0.7*" Margin="5,0,5,0">
+                <Grid BackgroundColor="#C0C0C0dd"
+                    RowDefinitions="*" ColumnDefinitions="0.3*, 0.7*" Margin="5,0,5,0">
 
                     <Image Grid.Row="0" Grid.Column="0"
                            Aspect="AspectFit"

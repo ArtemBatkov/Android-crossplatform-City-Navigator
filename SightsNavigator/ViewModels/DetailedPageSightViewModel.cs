@@ -44,6 +44,17 @@ namespace SightsNavigator.ViewModels
             }
             WhatIsVisible();
             AddRemoveFavouriteCommand = new AsyncCommand(onAddRemovePressed);
+
+            if(TripListModel.CityExists(city))
+            {
+                var favourites = city.FavouriteSights;
+                if (favourites.Any(s => s.Xid == sight.Xid))
+                {
+                    _wasAddedToTripList = true;
+                    ChangeFavouriteButtonState();
+                    OnPropertyChanged(nameof(ImageState));
+                }
+            }
         }
 
         
@@ -104,7 +115,19 @@ namespace SightsNavigator.ViewModels
             _wasAddedToTripList = !_wasAddedToTripList;
             if (TripListModel.CityExists(city))
             {
-
+                var favourites = city.FavouriteSights;
+                if (_wasAddedToTripList)
+                {
+                    //add a new sight to the list
+                    Add(ref favourites);                   
+                }
+                else
+                {
+                    //remove a new sight from the list
+                    Remove(ref favourites);
+                }
+                city.FavouriteSights = favourites;
+                TripListModel.updateCityProporties(city);
             }
             else
             {
@@ -115,10 +138,30 @@ namespace SightsNavigator.ViewModels
                 TripListModel.AddTrip(city);
             }
 
-            ChangeFavouriteButtonState();
-            
-            
+            ChangeFavouriteButtonState(); 
         }
+
+
+        private void Add(ref List<City.Sight> favourites)
+        {
+            if (!favourites.Any(s => s.Xid == sight.Xid))
+            {
+                //if it doesn't conatin in the favourites list
+                favourites.Insert(0, sight);
+            }            
+        }
+
+        private void Remove(ref List<City.Sight> favourites)
+        {
+            if (favourites.Any(s => s.Xid == sight.Xid))
+            {
+                //if it conatins in the favourites list just remove it
+                favourites.RemoveAll(s => s.Xid.Equals(sight.Xid));
+            }
+        }
+
+
+
 
         private void ChangeFavouriteButtonState()
         {

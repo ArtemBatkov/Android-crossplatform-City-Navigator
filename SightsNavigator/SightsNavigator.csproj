@@ -58,7 +58,14 @@
 	  <None Remove="Resources\Images\heart_empty.png" />
 	  <None Remove="Resources\Images\heart_filled.png" />
 	  <None Remove="Resources\Images\trip_blank.png" />
+	  <None Remove="secrets.json" />
 	  <None Remove="Views\DetailedPage.xaml~RF8b6b20f4.TMP" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="secrets.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -81,6 +88,9 @@
 
 	<ItemGroup>
 	  <MauiXaml Update="Views\TripDetailedPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\TripEditPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\TripPage.xaml">

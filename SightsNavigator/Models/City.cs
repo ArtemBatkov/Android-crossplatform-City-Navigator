@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SightsNavigator.Models
 {
-    public class City
+    public class City: CommunityToolkit.Mvvm.ComponentModel.ObservableObject
     {
+       
 
         //public fields
         public string DefaultBackground { get => _defaultbg; }
@@ -17,7 +19,13 @@ namespace SightsNavigator.Models
         public string CurrentBackground
         {
             get => _currentbackground;
-            set => _currentbackground = value;
+            set {
+                if(_currentbackground != value)
+                {
+                    _currentbackground = value;
+                    OnPropertyChanged(nameof(CurrentBackground));
+                }                
+            }
         }
         private string _currentbackground = _defaultbg;
         
@@ -69,7 +77,8 @@ namespace SightsNavigator.Models
         private List<String> _xidList;
 
         public List<Sight> SightList = new List<Sight>();
-        
+
+  
 
         public class Sight
         {

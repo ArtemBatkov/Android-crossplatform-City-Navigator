@@ -19,7 +19,7 @@ public partial class DetailedPage : ContentPage
         BindingContext = _detailedVM;
         _detailedVM.ServiceProvider = serviceProvider;
         _detailedVM.Googleservices = serviceProvider.GetService<IGooglePlaceService>();
-
-
     }
+
+   
 }

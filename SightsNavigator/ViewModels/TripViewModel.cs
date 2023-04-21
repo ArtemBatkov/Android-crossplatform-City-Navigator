@@ -14,17 +14,22 @@ namespace SightsNavigator.ViewModels
 {
     public class TripViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
     {
+
+        public TripEditViewModel _tripEditViewModel;
+
+
         public INavigation navigation { get; set; }
         public ObservableRangeCollection<City> Trips { get ; set; }
-        
 
-        public TripViewModel() {
+        public IServiceProvider _serviceProvider;
+
+        public TripViewModel(IServiceProvider serviceProvider) {
+            this._serviceProvider = serviceProvider;
             PageAppearingCommand = new AsyncCommand(PageAppearing);
             Trips = new ObservableRangeCollection<City>();
             SelectedItemCommand = new AsyncCommand(onSelectedTrip);
             var trips = TripListModel.GetTripList();
-            trips.ForEach(trip => Trips.Insert(0, trip));
-            
+            trips.ForEach(trip => Trips.Insert(0, trip));            
         }
 
       
@@ -35,7 +40,13 @@ namespace SightsNavigator.ViewModels
         public AsyncCommand SelectedItemCommand { get; set; }
         //E-----COMMANDS-----//
 
-        public City TripSelected { get => _tripselected; set => _tripselected = value; }
+        public City TripSelected { get => _tripselected;
+            set
+            {    
+                _tripselected = value;
+                OnPropertyChanged(nameof(TripSelected));                
+            }
+        }
         private City _tripselected = null;
 
         public String Avatar { get; set; }
@@ -47,9 +58,19 @@ namespace SightsNavigator.ViewModels
         private async Task onSelectedTrip()
         {
             if (_tripselected == null) return;
-            await navigation.PushAsync(new TripDetailedPage(_tripselected));
+            _tripEditViewModel = new TripEditViewModel(_tripselected);
+            _tripEditViewModel.CityChanged += OnCityChanged;
+            await navigation.PushAsync(new TripDetailedPage(_tripselected, _tripEditViewModel, _serviceProvider));
+            TripSelected = null;
             return;
         }
+
+        private void OnCityChanged(object sender, City e)
+        {
+            TripSelected = e;
+            OnPropertyChanged(nameof(TripSelected));
+        }
+
 
 
         private async Task PageAppearing()

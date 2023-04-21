@@ -30,31 +30,35 @@
 
     <ScrollView>
         <VerticalStackLayout >
-
-            <Button
-                Text="Add to Favourite"
-                Command="{Binding AddRemoveFavouriteCommand}"
-                ImageSource="{Binding ImageState}">          
-                
-                
-
-            </Button>
-
             <Label 
+                 FontSize="30"
+                FontAttributes="Bold"
                 IsVisible="{Binding HasName}"
                 Text="{Binding DName}"             
                 VerticalOptions="Center" 
                 HorizontalOptions="Center" />
             <Label 
+                FontSize="20"
+                FontAttributes="Bold"
                 IsVisible="{Binding HasAddress}"
                 Text="{Binding DAddress}"             
                 VerticalOptions="Center" 
                 HorizontalOptions="Center" />
-            <Image                                                                     
+            <Image                     
                 Aspect="AspectFit"                                      
                 Source="{Binding DImage, Converter={StaticResource ImageConverter}}"
                />
+            <StackLayout Orientation="Horizontal" HorizontalOptions="End">
+                <ImageButton
+                    Aspect="AspectFit"
+                    HeightRequest="50"  
+                    HorizontalOptions="End"
+                    BackgroundColor="Transparent"
+                    Command="{Binding AddRemoveFavouriteCommand}"
+                    Source="{Binding ImageState}"/>
+            </StackLayout>
             <Label
+                FontSize="15"
                 Text="{Binding DDescription}"
                 HorizontalOptions="FillAndExpand"
                 LineBreakMode="WordWrap"

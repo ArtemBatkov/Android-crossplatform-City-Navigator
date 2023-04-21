@@ -22,17 +22,15 @@ public partial class MainPage : ContentPage
 
 
         BindingContext = _sightViewModel;
-        _sightViewModel.SightsCollectionView = myCV;
+        //_sightViewModel.SightsCollectionView = myCV;
     }
 
     private void SightsScrolled(object sender, ItemsViewScrolledEventArgs e)
     {
+        
         _sightViewModel.onSightsScrolled(sender, e);
     }
 
-    private async void RemainingCollectionReached()
-    {
-       
-    }
+    
 }
 

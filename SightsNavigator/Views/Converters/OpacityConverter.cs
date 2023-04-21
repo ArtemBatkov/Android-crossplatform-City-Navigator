@@ -7,18 +7,14 @@ using System.Threading.Tasks;
 
 namespace SightsNavigator.Views.Converters
 {
-    public class ImageConverter : IValueConverter
+    public class OpacityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null || value.ToString() == "ERROR_DECODE_IMAGE")
-            {
-                return "blank_sight_2.png"; // путь к дефолтному изображению
-            }
+            if ((bool)value)
+                return 1;
             else
-            {                
-                return value.ToString(); // значение свойства ImageUrl
-            }
+                return 0.5;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

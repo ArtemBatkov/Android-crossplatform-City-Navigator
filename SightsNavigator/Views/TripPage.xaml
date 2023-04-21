@@ -12,10 +12,11 @@
 
 
 
-
+    <!--
     <ContentPage.BindingContext>
         <viewmodels:TripViewModel/>
     </ContentPage.BindingContext>
+    -->
 
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior
