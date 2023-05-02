@@ -5,8 +5,7 @@
              xmlns:views="clr-namespace:SightsNavigator.Views"
              xmlns:viewmodels="clr-namespace:SightsNavigator.ViewModels"
              xmlns:models="clr-namespace:SightsNavigator.Models"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             Title="DETAILED_PAGE"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"              
              xmlns:converter="clr-namespace:SightsNavigator.Views.Converters"
              xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps">
     
@@ -16,6 +15,7 @@
     </ContentPage.BindingContext>
     -->
     <ContentPage.Resources>
+        <Color x:Key="titlecl">#F8F8F8</Color>
         <converter:ImageConverter x:Key="ImageConverter"/>
     </ContentPage.Resources>
 
@@ -29,41 +29,73 @@
     </ContentPage.Behaviors>
 
     <ScrollView>
-        <VerticalStackLayout >
-            <Label 
-                 FontSize="30"
+        <VerticalStackLayout>
+            <Frame CornerRadius="10" BorderColor="Transparent" 
+                   BackgroundColor="{StaticResource titlecl}"
+                   Margin="10,0,10,10" IsVisible="{Binding HasName}">
+                <Label 
+                FontSize="Title"
                 FontAttributes="Bold"
                 IsVisible="{Binding HasName}"
                 Text="{Binding DName}"             
                 VerticalOptions="Center" 
                 HorizontalOptions="Center" />
-            <Label 
+            </Frame>
+
+            <Frame CornerRadius="10" BorderColor="Transparent" 
+                   BackgroundColor="{StaticResource titlecl}"
+                   Margin="10,0,10,10" IsVisible="{Binding HasAddress}">
+                <Label 
                 FontSize="20"
                 FontAttributes="Bold"
                 IsVisible="{Binding HasAddress}"
                 Text="{Binding DAddress}"             
                 VerticalOptions="Center" 
                 HorizontalOptions="Center" />
-            <Image                     
-                Aspect="AspectFit"                                      
-                Source="{Binding DImage, Converter={StaticResource ImageConverter}}"
-               />
-            <StackLayout Orientation="Horizontal" HorizontalOptions="End">
-                <ImageButton
+
+            </Frame>
+
+           
+                <Frame 
+                   BorderColor="Transparent" 
+                   CornerRadius="20" 
+                   Padding="0"                   
+                   IsClippedToBounds="True"
+                    Margin="10,0,10,0">
+                <Image                     
+                    Aspect="AspectFit"                                      
+                    Source="{Binding DImage, Converter={StaticResource ImageConverter}}"/>
+            </Frame>
+             
+           
+
+
+            <ImageButton
                     Aspect="AspectFit"
-                    HeightRequest="50"  
-                    HorizontalOptions="End"
+                    HeightRequest="35"
+                    WidthRequest="35"
+                    Margin="0,-0,20,0"
                     BackgroundColor="Transparent"
                     Command="{Binding AddRemoveFavouriteCommand}"
-                    Source="{Binding ImageState}"/>
-            </StackLayout>
-            <Label
-                FontSize="15"
+                    Source="{Binding ImageState}"
+                    HorizontalOptions="EndAndExpand"/>
+            
+
+
+
+            <Frame CornerRadius="10" BorderColor="Transparent" 
+                   BackgroundColor="{StaticResource titlecl}"
+                   Margin="10,0,10,10"                   
+                   HorizontalOptions="FillAndExpand">
+                <Label
+                FontSize="Body"
                 Text="{Binding DDescription}"
                 HorizontalOptions="FillAndExpand"
                 LineBreakMode="WordWrap"
-                />
-
+                Margin="10"/>
+            </Frame > 
+        
+        
             <!--
             <maps:Map MapType="Street">
                 <maps:Map.Pins>

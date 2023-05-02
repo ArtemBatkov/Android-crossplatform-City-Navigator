@@ -7,9 +7,10 @@
              xmlns:models="clr-namespace:SightsNavigator.Models"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:converter="clr-namespace:SightsNavigator.Views.Converters"
+             Background="White"
              >
-             
 
+    <!-- #D1D1D6 -->
 
 
 
@@ -27,34 +28,61 @@
     <ContentPage.Resources>
         <converter:ImageConverter x:Key="ImageConverter"/>
         <converter:TitleConverter x:Key="TitleConverter"/>
-        
+
+        <Color x:Key="cardcolcol">#F2F2F2</Color>
         <Color x:Key="searchbg">#c0c0c0</Color>
+        <Color x:Key="searchButtonColor">#006600</Color>
+
+
+
     </ContentPage.Resources>
 
+
+
     <NavigationPage.TitleView>
-      
-        <StackLayout  
+        <StackLayout 
             Orientation="Horizontal" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand">
-            <Button Text="Trip" Background="Wheat" Command="{Binding onTripPageCommand}" />
+            <Button Text="Trip" Background="Transparent" 
+                    Command="{Binding onTripPageCommand}" 
+                    TextColor="#007AFF"
+                    FontSize="Medium"
+                    FontAttributes="Bold"
+                    Margin="0,0,20,0"/>
         </StackLayout>
     </NavigationPage.TitleView>
-    
-    
 
 
-    <Grid ColumnDefinitions="3*,1*" RowDefinitions="0.1*,Auto,*,Auto">
 
-       
-        
-        
-        <Entry Grid.Row="0" Grid.Column="0" Text="{Binding Query}" 
-               Background="{StaticResource  searchbg}"
-               TextColor="Black"/>
+
+    <Grid ColumnDefinitions="0.75*,0.25*" RowDefinitions="0.1*,Auto,*,Auto"
+          Margin="10,10,10,0">
+
+
+        <Frame Grid.Row="0" Grid.Column="0" CornerRadius="10"
+               Padding="1" BorderColor="Transparent">
+            <Entry  Text="{Binding Query}" 
+               Background="#F5F5F5"
+               TextColor="Black"
+               Placeholder="insert a city..."
+               PlaceholderColor="#696969"
+               FontSize="Large" 
+               />
+        </Frame>
+
+
+
+
 
         <Button Grid.Row="0" Grid.Column="1" Text="Let's Find"
-                Command="{Binding SearchSightsCommand}"/>
+                Command="{Binding SearchSightsCommand}"
+                Margin="10,0,0,0"
+                FontSize="Caption"
+                TextColor="White"
+                FontAttributes="Bold"
+                FontAutoScalingEnabled="True"
+                BackgroundColor="{StaticResource searchButtonColor}"/>
 
-        <StackLayout
+        <StackLayout           
                      Orientation="Vertical"
             Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsVisible="{Binding IsVisibleStack}">
             <ActivityIndicator 
@@ -69,7 +97,7 @@
 
         </StackLayout>
 
-        <Grid  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+        <Grid  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,20,0,0">
 
             <CollectionView                          
                 ItemsSource="{Binding Sights}"
@@ -86,50 +114,68 @@
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid RowDefinitions="*" ColumnDefinitions="0.3*,0.7*"
-                               Margin="5,0,5,0">
+                        <Border StrokeThickness="0" Padding="0.1" 
+                                BackgroundColor="{StaticResource cardcolcol}" InputTransparent="True">
 
-                            <Label Grid.Row="0" 
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10" />
+                            </Border.StrokeShape>
+
+                            <Grid RowDefinitions="*" ColumnDefinitions="0.3*,0.7*"
+                               Margin="5,0,5,0" >
+                              
+
+                                <Label Grid.Row="0" 
                                     Grid.Column="0"                                    
                                     x:Name="lb"
                                   Text="{Binding Converter={StaticResource TitleConverter}}"
-                                   FontSize="30"
+                                   FontSize="Title"
                                    FontAttributes="Bold"
+                                   LineBreakMode="WordWrap"    
                                    />
 
+                                <Border Grid.Row="0"
+                                        Grid.Column="1"
+                                        StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="7" />
+                                    </Border.StrokeShape>
+                                    <Image                                 
+                                       Aspect="AspectFit"                                  
+                                       Source="{Binding Image, Converter={StaticResource ImageConverter}}"
+                                       Margin="0,0,0,5"/>
+                                </Border>
+                                
 
-                            <Image Grid.Row="0"
-                                   Grid.Column="1"                                  
-                                   Aspect="AspectFit"                                  
-                                   Source="{Binding Image, Converter={StaticResource ImageConverter}}"
-                                   Margin="0,0,0,5"
-                                   />
 
 
 
-
-                            <!-- 
+                                <!-- 
                             <Label Grid.Row="1" Grid.Column="1"
                                    Background="Yellow"
                                     Text="{Binding Description}" TextColor="Black"/>
                             -->
-                             
-                        </Grid>                         
+
+                            </Grid>
+
+                        </Border>
+
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
 
-                
+
 
             </CollectionView>
 
-           
+
         </Grid>
 
         <AbsoluteLayout  
             Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" HorizontalOptions="Center">
             <Button Text="{Binding TextLM}" BackgroundColor="CornflowerBlue" TextColor="Wheat" 
-            HorizontalOptions="Center" IsVisible="{Binding FooterVisible}" Command="{Binding LoadMoreCommand}">
-                
+            HorizontalOptions="Center" IsVisible="{Binding FooterVisible}" 
+                    Command="{Binding LoadMoreCommand}" Margin="0,11,0,11">
+
             </Button>
             <ActivityIndicator 
                         IsVisible="{Binding IsLMSpinnerVisible}"       

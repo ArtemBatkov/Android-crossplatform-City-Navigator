@@ -8,35 +8,22 @@
              xmlns:models="clr-namespace:SightsNavigator.Models"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:converter="clr-namespace:SightsNavigator.Views.Converters"
-             BackgroundImageSource="{Binding BackgroundImage}"
              >
-
-
+ 
+    
+    
     <NavigationPage.TitleView>
         <StackLayout  
-            Orientation="Horizontal" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand">
-            <Button Text="Edit" Background="lightblue" 
-                    TextColor="Black"
+            Orientation="Horizontal" VerticalOptions="CenterAndExpand" 
+            Margin="0,0,10,0"
+            HorizontalOptions="EndAndExpand">
+            <Button Text="Edit" Background="Transparent" 
+                    TextColor="#007AFF"
+                    FontSize="Medium"
                     Command="{Binding onTripEditPage}" />
         </StackLayout>
     </NavigationPage.TitleView>
 
-
-     
-        
-        
-
-    <!--
-    <ContentPage.BackgroundImageSource>
-        <UriImageSource Uri="{Binding BackgroundImage}" CacheValidity="1" />
-    </ContentPage.BackgroundImageSource>
-     -->
-
-     <!--
-    <ContentPage.BindingContext>
-        <viewmodels:TripDetailedViewModel/>
-    </ContentPage.BindingContext>
-    -->
 
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior
@@ -55,46 +42,69 @@
     </ContentPage.Resources>
 
      
-    <CollectionView                
-                ItemsSource="{Binding Favourites}"               
-                SelectedItem="{Binding FavouriteSelected}"
-                SelectionChangedCommand="{Binding SelectedItemCommand}"                
-                SelectionMode="Single">
-
-        <CollectionView.ItemsLayout>
-            <LinearItemsLayout Orientation="Vertical"
-                           ItemSpacing="10"/>
-        </CollectionView.ItemsLayout>
+  
+    <AbsoluteLayout>
         
-        
-        
-        
-        <CollectionView.ItemTemplate>
-            <DataTemplate>
-                <Grid BackgroundColor="#C0C0C0dd"
-                    RowDefinitions="*" ColumnDefinitions="0.3*, 0.7*" Margin="5,0,5,0">
+        <Image  Source="{Binding BackgroundImage}" 
+                Aspect="AspectFill"
+                Opacity="0.85"  
+                AbsoluteLayout.LayoutBounds="0,0,1,1"
+                AbsoluteLayout.LayoutFlags="All"/>
+            
 
-                    <Image Grid.Row="0" Grid.Column="0"
-                           Aspect="AspectFit"
-                           HeightRequest="100"
-                           WidthRequest="100"
-                           Source="{Binding Image, Converter={StaticResource ImageConverter}}"
-                           />
+        <CollectionView ItemsSource="{Binding Favourites}"
+                    SelectedItem="{Binding FavouriteSelected}"
+                    SelectionChangedCommand="{Binding SelectedItemCommand}"
+                    SelectionMode="Single"
+                    AbsoluteLayout.LayoutBounds="0,0,1,1"
+                    AbsoluteLayout.LayoutFlags="All"
+                        Margin="0,25,0,0">
+            
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="25"/>
+            </CollectionView.ItemsLayout>
+            
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border StrokeThickness="2"
+                            Margin="5,0,5,0"
+                            InputTransparent="True"
+                            Padding="0.1"
+                            Stroke="Transparent">
+                                                
+                        <Border.StrokeShape>
+                            <RoundRectangle Background="Red" CornerRadius="25" />
+                        </Border.StrokeShape>
 
-                    <Label Grid.Row="0" Grid.Column="1"
-                           Text="{Binding Converter={StaticResource TitleConverter}}"
-                           Margin="5,0,0,5"
-                           FontSize="25"
-                           HorizontalTextAlignment="Center"/>
-                    
-                    
-                </Grid>
+                        <Grid  RowDefinitions="*" ColumnDefinitions="0.35*, 0.65*" Margin="5,0,5,0">
+                            <Border Grid.Row="0" Grid.Column="0"
+                                    StrokeThickness="0.5"
+                                    Padding="0"                               
+                                    Margin="0,0,10,0"
+                                    HeightRequest="100"
+                                    WidthRequest="100"
+                                    Stroke="Black">
+                                
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="75" />
+                                </Border.StrokeShape>
 
+                                <Image  Aspect="Fill"  Source="{Binding Image, Converter={StaticResource ImageConverter}}"/>
 
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
+                            </Border>
+                            
+                            <Label  Grid.Row="0" Grid.Column="1" Text="{Binding Converter={StaticResource TitleConverter}}"
+                                    Margin="5,0,0,5" FontSize="Title" 
+                                    HorizontalOptions="CenterAndExpand"
+                                    VerticalOptions="CenterAndExpand"
+                                    HorizontalTextAlignment="Center" 
+                                    VerticalTextAlignment="Center"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </AbsoluteLayout>
 
-    </CollectionView>
-    
 
 </ContentPage>

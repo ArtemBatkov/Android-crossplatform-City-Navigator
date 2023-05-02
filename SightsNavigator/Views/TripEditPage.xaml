@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SightsNavigator.Views.TripEditPage"
-             Title="TripEditPage"             
+             x:Class="SightsNavigator.Views.TripEditPage"                         
              xmlns:views="clr-namespace:SightsNavigator.Views"
              xmlns:viewmodels="clr-namespace:SightsNavigator.ViewModels"
              xmlns:models="clr-namespace:SightsNavigator.Models"
@@ -41,19 +40,21 @@
 
         <CollectionView.ItemsLayout>
             <LinearItemsLayout Orientation="Vertical"
-                           ItemSpacing="10"/>
+                           ItemSpacing="40"/>
         </CollectionView.ItemsLayout>
         
         <CollectionView.ItemTemplate>
             <DataTemplate>
-                <StackLayout Orientation="Vertical">
-                    <Image  Aspect="AspectFit"                               
-                            Source="{Binding .}"
-                            Margin="5,0,0,5">
-                    </Image>
-                    
-                    <!--Source="{Binding Image, Converter={StaticResource ImageConverter}}"-->
-                </StackLayout>
+                
+                    <Border StrokeThickness="1" Margin="20,0,20,0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="7" />
+                        </Border.StrokeShape>
+                        <Image Aspect="AspectFit"  Source="{Binding .}"/>
+                    </Border>
+              
+               
+               
             </DataTemplate>
         </CollectionView.ItemTemplate>
     </CollectionView>

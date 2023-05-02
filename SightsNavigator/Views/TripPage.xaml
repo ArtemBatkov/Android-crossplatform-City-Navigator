@@ -30,6 +30,7 @@
         <converter:TitleConverter x:Key="TitleConverter"/>
 
         <Color x:Key="searchbg">#c0c0c0</Color>
+        <Color x:Key="titlecl">#F8F8F8</Color>
     </ContentPage.Resources>
 
  
@@ -43,23 +44,36 @@
                 SelectionChangedCommand="{Binding SelectedItemCommand}"                
                 SelectionMode="Single">
 
+        <CollectionView.ItemsLayout>
+            <LinearItemsLayout Orientation="Vertical"
+                           ItemSpacing="50"/>
+        </CollectionView.ItemsLayout>
 
         <CollectionView.ItemTemplate>
             <DataTemplate>
-                <Grid RowDefinitions="*" ColumnDefinitions="0.3*, 0.7*" Margin="5,0,5,0">
+                
+                <Grid RowDefinitions="*" ColumnDefinitions="0.4*, 0.6*" Margin="10,0,10,0">
 
-                    <Image Grid.Row="0" Grid.Column="0"
-                           Aspect="AspectFit"
-                           HeightRequest="100"
-                           WidthRequest="100"
-                           Source="{Binding CurrentBackground}"
-                           />
+                    <Border Grid.Row="0" Grid.Column="0"
+                            StrokeThickness="1"
+                            Padding="0"                               
+                            Margin="0,0,10,0"
+                            HeightRequest="100"
+                            WidthRequest="100">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="75" />
+                        </Border.StrokeShape>
+                        <Image Aspect="AspectFill" Source="{Binding CurrentBackground}"/>
+                    </Border>
 
                     <Label Grid.Row="0" Grid.Column="1"
                            Text="{Binding Name}"
                            Margin="5,0,0,5"
-                           FontSize="25"
-                           HorizontalTextAlignment="Center"/>                     
+                           FontSize="Title"
+                           FontAttributes="None"                           
+                           HorizontalTextAlignment="Center"
+                           HorizontalOptions="CenterAndExpand"
+                           VerticalOptions="CenterAndExpand"/>                     
                 </Grid>
 
 

@@ -1,4 +1,5 @@
-﻿using SightsNavigator.Models;
+﻿using CommunityToolkit.Maui.Core.Platform;
+using SightsNavigator.Models;
 using SightsNavigator.Services;
 using SightsNavigator.Services.SightService;
 using SightsNavigator.ViewModels;
@@ -15,6 +16,14 @@ public partial class MainPage : ContentPage
 	public MainPage(IServiceProvider serviceProvider)
 	{
 		InitializeComponent();
+
+
+        //StatusBar.SetColor(Colors.Red);
+        //NavigationPage.BarBackgroundColorProperty = Color.FromArgb("#ffff");
+
+        //var navigationPage = Shell.Current.CurrentPage as NavigationPage; 
+        //var navigationPage = (NavigationPage)Shell.Current.CurrentPage;
+
         this.serviceProvider = serviceProvider;
         _sightViewModel= new SearchCitySightsViewModel();
         _sightViewModel.navigation = Navigation;
@@ -31,6 +40,7 @@ public partial class MainPage : ContentPage
         _sightViewModel.onSightsScrolled(sender, e);
     }
 
-    
+  
+
 }
 

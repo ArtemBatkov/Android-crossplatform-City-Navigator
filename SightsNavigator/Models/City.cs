@@ -42,7 +42,7 @@ namespace SightsNavigator.Models
                     _backgrounds = value;
                     if (_currentbackground.Equals(_defaultbg))
                     {
-                        _currentbackground = _backgrounds[0];
+                        _currentbackground = _backgrounds.Last();
                     }
                 }
             }

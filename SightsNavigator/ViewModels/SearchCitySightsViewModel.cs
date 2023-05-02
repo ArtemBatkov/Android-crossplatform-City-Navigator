@@ -65,11 +65,12 @@ namespace SightsNavigator.ViewModels
         private bool _footerVisible = false;
         //Properties - end
 
-
+        private bool SearchedPressed = false;
 
         //FUNCTIONS - start
         private async void onSearchSights()
         {
+            SearchedPressed = true;
             IsLoad = true;            
             OnPropertyChanged(nameof(Sights));
             //Step 1 -- find the city
@@ -81,8 +82,9 @@ namespace SightsNavigator.ViewModels
 
             //Step 3 -- LoadMore
             await onLoadMoreCommand();
-           
+
             //Sights.Clear();
+            SearchedPressed = false;
             IsLoad = false;
             HasNothingFound = (Sights.Count == 0)  ? true : false;
         }
@@ -160,7 +162,7 @@ namespace SightsNavigator.ViewModels
         private async Task onLoadMoreCommand()
         {
             TextLM = $"\t\t\t";
-            IsLMSpinnerVisible = true;
+            IsLMSpinnerVisible = (SearchedPressed) ? false:true;
             int sec = 2;
             var beginmeasure = DateTime.UtcNow;
             await DelayFor(sec);
