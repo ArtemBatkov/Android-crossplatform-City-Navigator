@@ -20,7 +20,7 @@ namespace SightsNavigator;
 public partial class App : Application
 {
     private IConfiguration Configuration { get; }
-    
+
 
     private City.Sight _selectedItem = new City.Sight();
     public IServiceProvider ServiceProvider { get; }
@@ -41,7 +41,7 @@ public partial class App : Application
         //    .Build();
 
         //var gkey = AppSettings["GoogleMapsApiKey"];
-       
+
         //DependencyService.Register<GooglePlaceService>((service, arg) =>
         //{
         //    return new GooglePlaceService(arg);
@@ -49,7 +49,7 @@ public partial class App : Application
 
         //DependencyService.Register<IGooglePlaceService>(() => new GooglePlaceService(gkey));
 
-        
+
 
         //DependencyService.Register<IGooglePlaceService>(serviceProvider =>
         //{
@@ -61,7 +61,8 @@ public partial class App : Application
         DependencyService.Register<SightRequest>();
         DependencyService.Register<WebRequest>();
         //DependencyService.Register<GooglePlaceService>();
-;       
+
+        ;
 
 
 
@@ -97,7 +98,9 @@ public partial class App : Application
 
         //DependencyService.Register<INavigationService, NavigationService>();
         Application.Current.UserAppTheme = AppTheme.Light;
-         
+
+
+
     }
 
 
