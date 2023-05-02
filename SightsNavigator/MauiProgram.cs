@@ -26,47 +26,40 @@ public static class MauiProgram
 		Finally it will set-up secrets.json
 		 */
 
-        string gkey = "NULL";
-        try
+        Task.Run(async () =>
         {
+            string gkey = "NULL";
 
-
-
-
-
-            var n = "secrets.json";
-            //var dir = @"D:\Android C# Template Projects\SightsNavigator\SightsNavigator\secrets.json";
-
-            var сукаПуть = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments), n);
-            //Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), n);
-            // Path.Combine(Directory.GetCurrentDirectory(), n);
-
-            var a = Assembly.GetExecutingAssembly();
-            using var stream = a.GetManifestResourceStream("SightsNavigator.secrets.json");
-
-            using var reader = new StreamReader(stream);
-            var json = reader.ReadToEnd();
-            //var configuration = JsonConvert.DeserializeObject<Configuration>(json);
-
-            var tempPath = Path.Combine(Path.GetTempPath(), n);
-            File.WriteAllText(tempPath, json);
-
-
-            var AppSettings = new ConfigurationBuilder()
-                .AddJsonFile(tempPath)
-                .Build();
-
-
-
-            gkey = AppSettings["GoogleMapsApiKey"];
-        }
-        catch
-        {
-
-            //Polygone
-            Task.Run(async () =>
+            try
             {
-                //await SecureStorage.Default.SetAsync("oauth_token", "26110");
+
+                var n = "secrets.json";
+                //var dir = @"D:\Android C# Template Projects\SightsNavigator\SightsNavigator\secrets.json";
+
+                var сукаПуть = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments), n);
+                //Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), n);
+                // Path.Combine(Directory.GetCurrentDirectory(), n);
+
+                var a = Assembly.GetExecutingAssembly();
+                using var stream = a.GetManifestResourceStream("SightsNavigator.secrets.json");
+
+                using var reader = new StreamReader(stream);
+                var json = reader.ReadToEnd();
+                //var configuration = JsonConvert.DeserializeObject<Configuration>(json);
+
+                var tempPath = Path.Combine(Path.GetTempPath(), n);
+                File.WriteAllText(tempPath, json);
+
+
+                var AppSettings = new ConfigurationBuilder()
+                    .AddJsonFile(tempPath)
+                    .Build();
+
+                gkey = AppSettings["GoogleMapsApiKey"];
+                await SecureStorage.Default.SetAsync("oauth_token", gkey);
+            }
+            catch
+            {
                 string oauthToken = await SecureStorage.Default.GetAsync("oauth_token");
 
                 if (oauthToken == null)
@@ -74,13 +67,16 @@ public static class MauiProgram
                     // No value is associated with the key "oauth_token"
                     throw new ArgumentNullException(nameof(oauthToken));
                 }
-
                 gkey = oauthToken;
             }
-            );
-        }
+            finally
+            {
+                builder.Services.AddSingleton<IGooglePlaceService>(sp => new GooglePlaceService(gkey));
+            }
+        });
 
-        builder.Services.AddSingleton<IGooglePlaceService>(sp => new GooglePlaceService(gkey));
+
+
 
         builder
             .UseMauiApp<App>()
