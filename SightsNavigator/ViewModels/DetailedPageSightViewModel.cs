@@ -12,7 +12,7 @@ namespace SightsNavigator.ViewModels
 
     class DetailedPageSightViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
     {
-        
+
 
         private readonly City.Sight sight;
         private City city;
@@ -45,7 +45,7 @@ namespace SightsNavigator.ViewModels
             WhatIsVisible();
             AddRemoveFavouriteCommand = new AsyncCommand(onAddRemovePressed);
 
-            if(TripListModel.CityExists(city))
+            if (TripListModel.CityExists(city))
             {
                 var favourites = city.FavouriteSights;
                 if (favourites.Any(s => s.Xid == sight.Xid))
@@ -57,7 +57,7 @@ namespace SightsNavigator.ViewModels
             }
         }
 
-        
+
 
 
         // COMMANDS - start
@@ -112,33 +112,49 @@ namespace SightsNavigator.ViewModels
 
         private async Task onAddRemovePressed()
         {
-            _wasAddedToTripList = !_wasAddedToTripList;
-            if (TripListModel.CityExists(city))
+            try
             {
-                var favourites = city.FavouriteSights;
-                if (_wasAddedToTripList)
+                //throw new ArgumentException();
+                _wasAddedToTripList = !_wasAddedToTripList;
+                if (TripListModel.CityExists(city))
                 {
-                    //add a new sight to the list
-                    Add(ref favourites);                   
+                    var favourites = city.FavouriteSights;
+                    if (_wasAddedToTripList)
+                    {
+                        //add a new sight to the list
+                        Add(ref favourites);
+                    }
+                    else
+                    {
+                        //remove a new sight from the list
+                        Remove(ref favourites);
+                    }
+                    city.FavouriteSights = favourites;
+                    TripListModel.updateCityProporties(city);
                 }
                 else
                 {
-                    //remove a new sight from the list
-                    Remove(ref favourites);
+                    var google = new GooglePlace(city);
+                    if(google == null)
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Error", new ArgumentNullException(nameof(google)).ToString(), "OK");
+                    }
+                    google = await _googleservices.getDataFromGoogle(google);                   
+                    if(google.GooglePlaceCityId == "ERROR_ID")
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Error", $"Sorry, seems a city or town you are trying to add contains spelling mistakes, or it is not a city at all.\nPlease, be sure you are adding a correct city or try attempt later.", "OK");
+                        return;
+                    }
+                    city.Backgrounds = google.GooglePlacePhotoCandidates;
+                    city.FavouriteSights.Insert(0, sight);
+                    TripListModel.AddTrip(city);
                 }
-                city.FavouriteSights = favourites;
-                TripListModel.updateCityProporties(city);
+                ChangeFavouriteButtonState();
             }
-            else
+            catch (Exception ex)
             {
-                var google = new GooglePlace(city);                
-                google = await _googleservices.getDataFromGoogle(google);
-                city.Backgrounds = google.GooglePlacePhotoCandidates;
-                city.FavouriteSights.Insert(0, sight);
-                TripListModel.AddTrip(city);
+                 await Application.Current.MainPage.DisplayAlert("Error", $"{ex.Message} {Environment.NewLine} {ex.StackTrace}", "OK");
             }
-
-            ChangeFavouriteButtonState(); 
         }
 
 
@@ -148,7 +164,7 @@ namespace SightsNavigator.ViewModels
             {
                 //if it doesn't conatin in the favourites list
                 favourites.Insert(0, sight);
-            }            
+            }
         }
 
         private void Remove(ref List<City.Sight> favourites)
@@ -167,7 +183,7 @@ namespace SightsNavigator.ViewModels
         {
             if (_wasAddedToTripList)
             {
-                ImageState = "heart_filled.png";               
+                ImageState = "heart_filled.png";
             }
             else
             {

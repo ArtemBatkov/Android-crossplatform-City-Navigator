@@ -11,20 +11,20 @@ namespace SightsNavigator.Services.GooglePlaceService
 {
     public class GooglePlaceService : IGooglePlaceService
     {
-        private readonly string gkey = Environment.GetEnvironmentVariable("GoogleMapsApiKey");
+        private  string gkey = Environment.GetEnvironmentVariable("GoogleMapsApiKey");
         private GooglePlace _google;
         public readonly string ErrorId = "ERROR_ID";
 
         private string _gkey;
 
         public GooglePlaceService(string gkey)
-        {
+        {           
             this.gkey = gkey;
         }
         public async Task<GooglePlace> getDataFromGoogle(GooglePlace google)
-        {
+        {           
             this._google = google;
-            var f = Environment.GetEnvironmentVariable("GoogleMapsApiKey");
+            //var f = Environment.GetEnvironmentVariable("GoogleMapsApiKey");
             string id = await getGooglePlaceId();
             if(String.IsNullOrEmpty(id))
             {

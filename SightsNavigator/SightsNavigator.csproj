@@ -58,7 +58,6 @@
 	  <None Remove="Resources\Images\heart_empty.png" />
 	  <None Remove="Resources\Images\heart_filled.png" />
 	  <None Remove="Resources\Images\trip_blank.png" />
-	  <None Remove="secrets.json" />
 	  <None Remove="Views\DetailedPage.xaml~RF8b6b20f4.TMP" />
 	</ItemGroup>
 
@@ -66,6 +65,7 @@
 		<PackageReference Include="Autofac" Version="7.0.1" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="5.1.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
+		<PackageReference Include="FirebaseDatabase.net" Version="4.2.0" />
 		<PackageReference Include="Google.Apis.Script.v1" Version="1.60.0.2638" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
@@ -94,6 +94,12 @@
 	  <MauiXaml Update="Views\DetailedPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="secrets.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>
