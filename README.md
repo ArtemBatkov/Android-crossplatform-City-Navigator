@@ -23,7 +23,8 @@ The second API is used here Google Places API, and it is used for fetching some 
 ##  &emsp;**How it works**
 
 <div align="center">
-![MainPage](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/487898c0-8e2c-4980-be8e-f21c8c1f06c9)
+
+ ![MainPage](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/487898c0-8e2c-4980-be8e-f21c8c1f06c9) 
 <br>
 Screenshot 1 -- The MainPage represents the initial page of the app. It contains the query string, button search and navigation to the "Trip" page.
 <br><br>
