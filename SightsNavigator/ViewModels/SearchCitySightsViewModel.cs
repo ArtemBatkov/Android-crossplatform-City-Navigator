@@ -272,7 +272,7 @@ namespace SightsNavigator.ViewModels
             get => _query;
             set => _query = value;
         }
-        private string _query = "Saint-Petersburg";
+        private string _query = "Toronto";
 
 
         private bool _isload = false;
