@@ -22,7 +22,7 @@ The second API is used here Google Places API, and it is used for fetching some 
 
 ##  &emsp;**How it works**
 
-
+<div align="center">
 ![MainPage](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/487898c0-8e2c-4980-be8e-f21c8c1f06c9)
 <br>
 Screenshot 1 -- The MainPage represents the initial page of the app. It contains the query string, button search and navigation to the "Trip" page.
@@ -54,7 +54,21 @@ Screenshot 6 -- MainPage, "LoadMore" shows the process is executing now.
 <br><br>
 
 
+![DetailedPage 1](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/7924497d-2e8a-42f6-be0d-ea06515f62ad)
+<br>
+Screenshot 7 -- Detailed Page. When a sight is selected, Detailed Page pops up, and shows all possible information related to the sight: Title, Image, Description.  
+<br><br>
 
+![DetailedPage 2](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/bd338192-1e01-4fb4-bcf3-053a3574b9fb)
+<br>
+Screenshot 8 -- Detailed Page. Here, the sight can be added to the favorites list by pressing "heart" button. Now it has unactive state.
+<br><br>
+ 
+![DetailedPage 3](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/9b00fb1e-1d0b-401a-af02-f0170501ed2f)
+<br>
+Screenshot 9 -- Detailed Page. When "heart" button is read that indecated the sight was successfully added to the trip list.
+<br><br>
+</div>
 
 
 <br>
