@@ -69,7 +69,75 @@ Screenshot 8 -- Detailed Page. Here, the sight can be added to the favorites lis
 <br>
 Screenshot 9 -- Detailed Page. When "heart" button is read that indecated the sight was successfully added to the trip list.
 <br><br>
+ 
+ ![MainPage problems and issues](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/ddad1b5f-38a8-4bcb-9a7e-d27f9c584a41)
+<br>
+Screenshot 10 -- MainPage, some of the sights can't contain an image or title. This example doesn't have both of them. However, it is fine because it was discussed on "OpenTripMap" documentation.
+<br><br>
+ 
+ ![Trip Page 1](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/05bec8dd-f967-4bf1-860a-3b18ab5cb309)
+<br>
+Screenshot 11 -- From MainPage to Trip navigation Page.
+<br><br>
+ 
+ ![Trip Page 2](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/d5b29f02-ea02-4630-a193-db7511e48bf5)
+<br>
+Screenshot 12 -- Trip Page. Here is a list of cities that contain some favorite places. Now it keeps 2 cities: Toronto and Vancouver.
+<br><br>
+ 
+  ![Trip Detailed Page 1](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/da3ac0ea-f6a4-4c68-8812-e40c23b15d6f)
+<br>
+Screenshot 13 -- Trip Detailed Page. Inside of the Trip Detailed Page a list of favorite sights can be seen. Also, the page sets the current background for this city. Here can be found a church that was added before. 
+<br><br>
+ 
+ ![Trip Detailed Page 2](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/2b172de8-50fc-44ed-9edf-c130ca36f08f)
+<br>
+Screenshot 14 -- Trip Detailed Page. When a favorite sight is selected, it navigates to the Detailed Page. 
+<br><br>
+ 
+  ![Trip Detailed Page 2](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/b86260ae-fa7d-480f-a483-a39fad7b860f)
+<br>
+Screenshot 15 -- Trip Detailed Page pushes to Detailed Page. Here, the sight can be unselected if it is reuired.
+<br><br>
+ 
+![Trip Detailed Page 3](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/cfe61721-74e2-482e-9c40-be6b6d18af6b)
+<br>
+Screenshot 17 -- Unselect our sight and go back.
+<br><br>
+ 
+ ![Trip Detailed Page 4](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/84a14685-6b4f-4309-b528-668735ec4d6c)
+<br>
+Screenshot 18 -- Trip Detailed Page. Now the sight was removed from the list.
+<br><br>
+
+ 
+  ![Trip Detailed Page 5](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/080f03d3-fe3f-48d8-a5eb-10fa3815afaa)
+<br>
+Screenshot 19 -- Click on "Edit" to change the background if it is possible for the city. 
+<br><br>
+ 
+   ![Trip Edit Page](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/633e850d-5821-4e96-9917-db61232df7b9)
+<br>
+Screenshot 20 -- Trip Edit Page. There is a list of possible backgrounds related to this city. Only one can be picked and all changes will be applied for the city.
+<br><br>
+ 
+ 
+![Trip Edit Page](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/58e96bb3-59ae-438c-8ef2-29fdcd1f5ea7)
+<br>
+Screenshot 21 -- Trip Detailed Page. The background has changed.
+<br><br>
+ 
+ ![Trip Page](https://github.com/ArtemBatkov/Sights-Navigator/assets/110242091/eda21af2-7c4f-436f-91f6-7219625337ab)
+<br>
+Screenshot 21 -- Trip Page. The avatar has changed.
+<br><br>
+ 
+
+ 
 </div>
+
+ I am considering implementing an update for my application that will allow users to save a list of cities, which will be remembered when the app is relaunched.
+ 
 
 
 <br>
